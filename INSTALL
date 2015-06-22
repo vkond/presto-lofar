@@ -1,5 +1,16 @@
 Basic steps to install:
 
+0. To support LOFAR HDF5 raw data files you need to install
+   LOFAR DAL library (Direct Access Library).
+      https://github.com/nextgen-astrodata/DAL.git
+   Instructions can be found on LOFAR wiki:
+      http://www.lofar.org/wiki/doku.php?id=public:user_software:dal
+
+   To compile the code with LOFAR HDF5 support make sure
+   to have line USELOFAR = yes in your src/Makefile
+   Also, put proper paths for DAL shared library and include
+   files in LOFARLINK and INCLH5 variables
+
 1.  Install FFTW3.X  You need to compile FFTW for _single_
   precision (see the config flags I recommend below).
 
