@@ -10,6 +10,8 @@ Commandline full_cmd_line
 
 # Options (in order you want them to appear)
 
+Int -ncpus   ncpus      {Number of processors to use with OpenMP} \
+	-r 1 oo  -d 1
 String -o       outfile {Root of the output file names} \
 	-m
 Flag   -pkmb    pkmb    {Raw data in Parkes Multibeam format}
@@ -17,7 +19,6 @@ Flag   -gmrt    gmrt    {Raw data in GMRT Phased Array format}
 Flag   -bcpm    bcpm    {Raw data in Berkeley-Caltech Pulsar Machine (BPP) format}
 Flag   -spigot  spigot  {Raw data in Caltech-NRAO Spigot Card format}
 Flag   -filterbank  filterbank  {Raw data in SIGPROC filterbank format}
-Flag   -lofarhdf5     lofarhdf5     {Raw data in LOFARHDF5 format}
 Flag   -psrfits     psrfits     {Raw data in PSRFITS format}
 Flag   -noweights  noweights  {Do not apply PSRFITS weights}
 Flag   -noscales   noscales   {Do not apply PSRFITS scales}
