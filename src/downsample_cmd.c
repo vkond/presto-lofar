@@ -779,16 +779,16 @@ showOptionValues(void)
 void
 usage(void)
 {
-  fprintf(stderr,"%s","   -factor factor [-o outfile] [--] file\n");
-  fprintf(stderr,"%s","      Downsamples a time series.\n");
-  fprintf(stderr,"%s","    -factor: The factor to downsample the data\n");
-  fprintf(stderr,"%s","             1 int value between 1 and 100\n");
-  fprintf(stderr,"%s","         -o: Name of the output time series file (with suffix)\n");
-  fprintf(stderr,"%s","             1 char* value\n");
-  fprintf(stderr,"%s","       file: Input '.dat' or '.sdat' file name\n");
-  fprintf(stderr,"%s","             1 value\n");
-  fprintf(stderr,"%s","  version: 12Mar10\n");
-  fprintf(stderr,"%s","  ");
+  fprintf(stderr,"   -factor factor [-o outfile] [--] file\n");
+  fprintf(stderr,"      Downsamples a time series.\n");
+  fprintf(stderr,"    -factor: The factor to downsample the data\n");
+  fprintf(stderr,"             1 int value between 1 and 100\n");
+  fprintf(stderr,"         -o: Name of the output time series file (with suffix)\n");
+  fprintf(stderr,"             1 char* value\n");
+  fprintf(stderr,"       file: Input '.dat' or '.sdat' file name\n");
+  fprintf(stderr,"             1 value\n");
+  fprintf(stderr,"  version: 22Jun15\n");
+  fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
 /**********************************************************************/

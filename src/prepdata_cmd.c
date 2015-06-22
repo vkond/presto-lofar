@@ -36,10 +36,8 @@ static Cmdline cmd = {
   /* spigotP = */ 0,
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   /* filterbankP = */ 0,
-#ifdef USELOFAR
   /***** -lofarhdf5: Raw data in LOFARHDF5 format */
   /* lofarhdf5P = */ 0,
-#endif
   /***** -psrfits: Raw data in PSRFITS format */
   /* psrfitsP = */ 0,
   /***** -noweights: Do not apply PSRFITS weights */
@@ -850,16 +848,12 @@ showOptionValues(void)
     printf("-filterbank found:\n");
   }
 
-#ifdef USELOFAR
-
   /***** -lofarhdf5: Raw data in LOFARHDF5 format */
   if( !cmd.lofarhdf5P ) {
     printf("-lofarhdf5 not found.\n");
   } else {
     printf("-lofarhdf5 found:\n");
   }
-
-#endif
 
   /***** -psrfits: Raw data in PSRFITS format */
   if( !cmd.psrfitsP ) {
@@ -1043,11 +1037,7 @@ showOptionValues(void)
 void
 usage(void)
 {
-#ifdef USELOFAR
   fprintf(stderr,"   -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-numout numout] [-downsamp downsamp] [-nobary] [-shorts] [-DE405] [-dm dm] [-mask maskfile] [--] infile ...\n");
-#else
-  fprintf(stderr,"   -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-numout numout] [-downsamp downsamp] [-nobary] [-shorts] [-DE405] [-dm dm] [-mask maskfile] [--] infile ...\n");
-#endif
   fprintf(stderr,"      Prepares a raw data file for pulsar searching or folding (conversion, de-dispersion, and barycentering).\n");
   fprintf(stderr,"             -o: Root of the output file names\n");
   fprintf(stderr,"                 1 char* value\n");
@@ -1056,9 +1046,7 @@ usage(void)
   fprintf(stderr,"          -bcpm: Raw data in Berkeley-Caltech Pulsar Machine (BPP) format\n");
   fprintf(stderr,"        -spigot: Raw data in Caltech-NRAO Spigot Card format\n");
   fprintf(stderr,"    -filterbank: Raw data in SIGPROC filterbank format\n");
-#ifdef USELOFAR
   fprintf(stderr,"     -lofarhdf5: Raw data in LOFARHDF5 format\n");
-#endif
   fprintf(stderr,"       -psrfits: Raw data in PSRFITS format\n");
   fprintf(stderr,"     -noweights: Do not apply PSRFITS weights\n");
   fprintf(stderr,"      -noscales: Do not apply PSRFITS scales\n");
@@ -1091,7 +1079,7 @@ usage(void)
   fprintf(stderr,"                 1 char* value\n");
   fprintf(stderr,"         infile: Input data file name.  If the data is not in a known raw format, it should be a single channel of single-precision floating point data.  In this case a '.inf' file with the same root filename must also exist (Note that this means that the input data file must have a suffix that starts with a period)\n");
   fprintf(stderr,"                 1...512 values\n");
-  fprintf(stderr,"  version: 18Jun15\n");
+  fprintf(stderr,"  version: 22Jun15\n");
   fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
@@ -1143,12 +1131,10 @@ parseCmdline(int argc, char **argv)
       continue;
     }
 
-#ifdef USELOFAR
     if( 0==strcmp("-lofarhdf5", argv[i]) ) {
       cmd.lofarhdf5P = 1;
       continue;
     }
-#endif
 
     if( 0==strcmp("-psrfits", argv[i]) ) {
       cmd.psrfitsP = 1;

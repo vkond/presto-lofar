@@ -36,10 +36,8 @@ static Cmdline cmd = {
   /* spigotP = */ 0,
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   /* filterbankP = */ 0,
-#ifdef USELOFAR
   /***** -lofarhdf5: Raw data in LOFARHDF5 format */
   /* lofarhdf5P = */ 0,
-#endif
   /***** -psrfits: Raw data in PSRFITS format */
   /* psrfitsP = */ 0,
   /***** -noweights: Do not apply PSRFITS weights */
@@ -872,16 +870,12 @@ showOptionValues(void)
     printf("-filterbank found:\n");
   }
 
-#ifdef USELOFAR
-
   /***** -lofarhdf5: Raw data in LOFARHDF5 format */
   if( !cmd.lofarhdf5P ) {
     printf("-lofarhdf5 not found.\n");
   } else {
     printf("-lofarhdf5 found:\n");
   }
-
-#endif
 
   /***** -psrfits: Raw data in PSRFITS format */
   if( !cmd.psrfitsP ) {
@@ -1132,72 +1126,66 @@ showOptionValues(void)
 void
 usage(void)
 {
-#ifdef USELOFAR
-  fprintf(stderr,"%s","   -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-runavg] [-sub] [-subdm subdm] [-numout numout] [-nobary] [-DE405] [-lodm lodm] [-dmstep dmstep] [-numdms numdms] [-nsub nsub] [-downsamp downsamp] [-dmprec dmprec] [-mask maskfile] [--] infile ...\n");
-#else
-  fprintf(stderr,"%s","   -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-runavg] [-sub] [-subdm subdm] [-numout numout] [-nobary] [-DE405] [-lodm lodm] [-dmstep dmstep] [-numdms numdms] [-nsub nsub] [-downsamp downsamp] [-dmprec dmprec] [-mask maskfile] [--] infile ...\n");
-#endif
-  fprintf(stderr,"%s","      Converts a raw radio data file into many de-dispersed time-series (including barycentering).\n");
-  fprintf(stderr,"%s","             -o: Root of the output file names\n");
-  fprintf(stderr,"%s","                 1 char* value\n");
-  fprintf(stderr,"%s","          -pkmb: Raw data in Parkes Multibeam format\n");
-  fprintf(stderr,"%s","          -gmrt: Raw data in GMRT Phased Array format\n");
-  fprintf(stderr,"%s","          -bcpm: Raw data in Berkeley-Caltech Pulsar Machine (BPP) format\n");
-  fprintf(stderr,"%s","        -spigot: Raw data in Caltech-NRAO Spigot Card format\n");
-  fprintf(stderr,"%s","    -filterbank: Raw data in SIGPROC filterbank format\n");
-#ifdef USELOFAR
-  fprintf(stderr,"%s","     -lofarhdf5: Raw data in LOFARHDF5 format\n");
-#endif
-  fprintf(stderr,"%s","       -psrfits: Raw data in PSRFITS format\n");
-  fprintf(stderr,"%s","     -noweights: Do not apply PSRFITS weights\n");
-  fprintf(stderr,"%s","      -noscales: Do not apply PSRFITS scales\n");
-  fprintf(stderr,"%s","     -nooffsets: Do not apply PSRFITS offsets\n");
-  fprintf(stderr,"%s","          -wapp: Raw data in Wideband Arecibo Pulsar Processor (WAPP) format\n");
-  fprintf(stderr,"%s","        -window: Window correlator lags with a Hamming window before FFTing\n");
-  fprintf(stderr,"%s","      -numwapps: Number of WAPPs used with contiguous frequencies\n");
-  fprintf(stderr,"%s","                 1 int value between 1 and 8\n");
-  fprintf(stderr,"%s","                 default: `1'\n");
-  fprintf(stderr,"%s","            -if: A specific IF to use if available (summed IFs is the default)\n");
-  fprintf(stderr,"%s","                 1 int value between 0 and 1\n");
-  fprintf(stderr,"%s","          -clip: Time-domain sigma to use for clipping (0.0 = no clipping, 6.0 = default\n");
-  fprintf(stderr,"%s","                 1 float value between 0 and 1000.0\n");
-  fprintf(stderr,"%s","                 default: `6.0'\n");
-  fprintf(stderr,"%s","        -noclip: Do not clip the data.  (The default is to _always_ clip!)\n");
-  fprintf(stderr,"%s","        -invert: For rawdata, flip (or invert) the band\n");
-  fprintf(stderr,"%s","        -zerodm: Subtract the mean of all channels from each sample (i.e. remove zero DM)\n");
-  fprintf(stderr,"%s","        -runavg: Running mean subtraction from the input data\n");
-  fprintf(stderr,"%s","           -sub: Write subbands instead of de-dispersed data\n");
-  fprintf(stderr,"%s","         -subdm: The DM to use when de-dispersing subbands for -sub\n");
-  fprintf(stderr,"%s","                 1 double value between 0 and 4000.0\n");
-  fprintf(stderr,"%s","                 default: `0.0'\n");
-  fprintf(stderr,"%s","        -numout: Output this many values.  If there are not enough values in the original data file, will pad the output file with the average value\n");
-  fprintf(stderr,"%s","                 1 int value between 1 and oo\n");
-  fprintf(stderr,"%s","        -nobary: Do not barycenter the data\n");
-  fprintf(stderr,"%s","         -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default)\n");
-  fprintf(stderr,"%s","          -lodm: The lowest dispersion measure to de-disperse (cm^-3 pc)\n");
-  fprintf(stderr,"%s","                 1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","                 default: `0'\n");
-  fprintf(stderr,"%s","        -dmstep: The stepsize in dispersion measure to use(cm^-3 pc)\n");
-  fprintf(stderr,"%s","                 1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","                 default: `1.0'\n");
-  fprintf(stderr,"%s","        -numdms: The number of DMs to de-disperse\n");
-  fprintf(stderr,"%s","                 1 int value between 1 and 1000\n");
-  fprintf(stderr,"%s","                 default: `10'\n");
-  fprintf(stderr,"%s","          -nsub: The number of sub-bands to use\n");
-  fprintf(stderr,"%s","                 1 int value between 1 and 1024\n");
-  fprintf(stderr,"%s","                 default: `32'\n");
-  fprintf(stderr,"%s","      -downsamp: The number of neighboring bins to co-add\n");
-  fprintf(stderr,"%s","                 1 int value between 1 and 128\n");
-  fprintf(stderr,"%s","                 default: `1'\n");
-  fprintf(stderr,"%s","        -dmprec: The number of decimals in the precision of the DM in the filename.\n");
-  fprintf(stderr,"%s","                 1 int value between 2 and 4\n");
-  fprintf(stderr,"%s","                 default: `2'\n");
-  fprintf(stderr,"%s","          -mask: File containing masking information to use\n");
-  fprintf(stderr,"%s","                 1 char* value\n");
-  fprintf(stderr,"%s","         infile: Input data file name.  If the data is not in a known raw format, it should be a single channel of single-precision floating point data.  In this case a '.inf' file with the same root filename must also exist (Note that this means that the input data file must have a suffix that starts with a period)\n");
-  fprintf(stderr,"%s","                 1...16384 values\n");
-  fprintf(stderr,"%s","  version: 08Apr14\n");
-  fprintf(stderr,"%s","  ");
+  fprintf(stderr,"   -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-runavg] [-sub] [-subdm subdm] [-numout numout] [-nobary] [-DE405] [-lodm lodm] [-dmstep dmstep] [-numdms numdms] [-nsub nsub] [-downsamp downsamp] [-dmprec dmprec] [-mask maskfile] [--] infile ...\n");
+  fprintf(stderr,"      Converts a raw radio data file into many de-dispersed time-series (including barycentering).\n");
+  fprintf(stderr,"             -o: Root of the output file names\n");
+  fprintf(stderr,"                 1 char* value\n");
+  fprintf(stderr,"          -pkmb: Raw data in Parkes Multibeam format\n");
+  fprintf(stderr,"          -gmrt: Raw data in GMRT Phased Array format\n");
+  fprintf(stderr,"          -bcpm: Raw data in Berkeley-Caltech Pulsar Machine (BPP) format\n");
+  fprintf(stderr,"        -spigot: Raw data in Caltech-NRAO Spigot Card format\n");
+  fprintf(stderr,"    -filterbank: Raw data in SIGPROC filterbank format\n");
+  fprintf(stderr,"     -lofarhdf5: Raw data in LOFARHDF5 format\n");
+  fprintf(stderr,"       -psrfits: Raw data in PSRFITS format\n");
+  fprintf(stderr,"     -noweights: Do not apply PSRFITS weights\n");
+  fprintf(stderr,"      -noscales: Do not apply PSRFITS scales\n");
+  fprintf(stderr,"     -nooffsets: Do not apply PSRFITS offsets\n");
+  fprintf(stderr,"          -wapp: Raw data in Wideband Arecibo Pulsar Processor (WAPP) format\n");
+  fprintf(stderr,"        -window: Window correlator lags with a Hamming window before FFTing\n");
+  fprintf(stderr,"      -numwapps: Number of WAPPs used with contiguous frequencies\n");
+  fprintf(stderr,"                 1 int value between 1 and 8\n");
+  fprintf(stderr,"                 default: `1'\n");
+  fprintf(stderr,"            -if: A specific IF to use if available (summed IFs is the default)\n");
+  fprintf(stderr,"                 1 int value between 0 and 1\n");
+  fprintf(stderr,"          -clip: Time-domain sigma to use for clipping (0.0 = no clipping, 6.0 = default\n");
+  fprintf(stderr,"                 1 float value between 0 and 1000.0\n");
+  fprintf(stderr,"                 default: `6.0'\n");
+  fprintf(stderr,"        -noclip: Do not clip the data.  (The default is to _always_ clip!)\n");
+  fprintf(stderr,"        -invert: For rawdata, flip (or invert) the band\n");
+  fprintf(stderr,"        -zerodm: Subtract the mean of all channels from each sample (i.e. remove zero DM)\n");
+  fprintf(stderr,"        -runavg: Running mean subtraction from the input data\n");
+  fprintf(stderr,"           -sub: Write subbands instead of de-dispersed data\n");
+  fprintf(stderr,"         -subdm: The DM to use when de-dispersing subbands for -sub\n");
+  fprintf(stderr,"                 1 double value between 0 and 4000.0\n");
+  fprintf(stderr,"                 default: `0.0'\n");
+  fprintf(stderr,"        -numout: Output this many values.  If there are not enough values in the original data file, will pad the output file with the average value\n");
+  fprintf(stderr,"                 1 int value between 1 and oo\n");
+  fprintf(stderr,"        -nobary: Do not barycenter the data\n");
+  fprintf(stderr,"         -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default)\n");
+  fprintf(stderr,"          -lodm: The lowest dispersion measure to de-disperse (cm^-3 pc)\n");
+  fprintf(stderr,"                 1 double value between 0 and oo\n");
+  fprintf(stderr,"                 default: `0'\n");
+  fprintf(stderr,"        -dmstep: The stepsize in dispersion measure to use(cm^-3 pc)\n");
+  fprintf(stderr,"                 1 double value between 0 and oo\n");
+  fprintf(stderr,"                 default: `1.0'\n");
+  fprintf(stderr,"        -numdms: The number of DMs to de-disperse\n");
+  fprintf(stderr,"                 1 int value between 1 and 1000\n");
+  fprintf(stderr,"                 default: `10'\n");
+  fprintf(stderr,"          -nsub: The number of sub-bands to use\n");
+  fprintf(stderr,"                 1 int value between 1 and 8192\n");
+  fprintf(stderr,"                 default: `32'\n");
+  fprintf(stderr,"      -downsamp: The number of neighboring bins to co-add\n");
+  fprintf(stderr,"                 1 int value between 1 and 128\n");
+  fprintf(stderr,"                 default: `1'\n");
+  fprintf(stderr,"        -dmprec: The number of decimals in the precision of the DM in the filename.\n");
+  fprintf(stderr,"                 1 int value between 2 and 4\n");
+  fprintf(stderr,"                 default: `2'\n");
+  fprintf(stderr,"          -mask: File containing masking information to use\n");
+  fprintf(stderr,"                 1 char* value\n");
+  fprintf(stderr,"         infile: Input data file name.  If the data is not in a known raw format, it should be a single channel of single-precision floating point data.  In this case a '.inf' file with the same root filename must also exist (Note that this means that the input data file must have a suffix that starts with a period)\n");
+  fprintf(stderr,"                 1...16384 values\n");
+  fprintf(stderr,"  version: 22Jun15\n");
+  fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
 /**********************************************************************/
@@ -1248,12 +1236,10 @@ parseCmdline(int argc, char **argv)
       continue;
     }
 
-#ifdef USELOFAR
     if( 0==strcmp("-lofarhdf5", argv[i]) ) {
       cmd.lofarhdf5P = 1;
       continue;
     }
-#endif
 
     if( 0==strcmp("-psrfits", argv[i]) ) {
       cmd.psrfitsP = 1;
@@ -1402,7 +1388,7 @@ parseCmdline(int argc, char **argv)
       cmd.nsubP = 1;
       i = getIntOpt(argc, argv, i, &cmd.nsub, 1);
       cmd.nsubC = i-keep;
-      checkIntLower("-nsub", &cmd.nsub, cmd.nsubC, 1024);
+      checkIntLower("-nsub", &cmd.nsub, cmd.nsubC, 8192);
       checkIntHigher("-nsub", &cmd.nsub, cmd.nsubC, 1);
       continue;
     }

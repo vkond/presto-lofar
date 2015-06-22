@@ -11,7 +11,7 @@
 .\" it edited by clig, remove the respective pair of cligPart-lines.
 .\"
 .\" cligPart TITLE
-.TH "prepfold" 1 "09Aug14" "Clig-manuals" "Programmer's Manual"
+.TH "prepfold" 1 "22Jun15" "Clig-manuals" "Programmer's Manual"
 .\" cligPart TITLE end
 
 .\" cligPart NAME
@@ -28,6 +28,7 @@ prepfold \- Prepares (if required) and folds raw radio data, standard time serie
 [-bcpm]
 [-spigot]
 [-filterbank]
+[-lofarhdf5]
 [-psrfits]
 [-noweights]
 [-noscales]
@@ -119,6 +120,8 @@ Raw data in Berkeley-Caltech Pulsar Machine (BPP) format.
 Raw data in Caltech-NRAO Spigot Card format.
 .IP -filterbank
 Raw data in SIGPROC filterbank format.
+.IP -lofarhdf5
+Raw data in LOFARHDF5 format.
 .IP -psrfits
 Raw data in PSRFITS format.
 .IP -noweights
@@ -204,13 +207,13 @@ The number of bins in the profile.  Defaults to the number of sampling bins whic
 .IP -nsub
 The number of sub-bands to use for the DM search,
 .br
-1 Int value between 1 and 4096.
+1 Int value between 1 and 8192.
 .br
 Default: `32'
 .IP -npart
 The number of sub-integrations to use for the period search,
 .br
-1 Int value between 1 and 4096.
+1 Int value between 1 and 8192.
 .br
 Default: `64'
 .IP -pstep

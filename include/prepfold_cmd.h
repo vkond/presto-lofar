@@ -23,10 +23,8 @@ typedef struct s_Cmdline {
   char spigotP;
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   char filterbankP;
-#ifdef USELOFAR
   /***** -lofarhdf5: Raw data in LOFARHDF5 format */
   char lofarhdf5P;
-#endif
   /***** -psrfits: Raw data in PSRFITS format */
   char psrfitsP;
   /***** -noweights: Do not apply PSRFITS weights */

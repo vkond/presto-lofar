@@ -787,21 +787,21 @@ showOptionValues(void)
 void
 usage(void)
 {
-  fprintf(stderr,"%s","   [-startwidth startwidth] [-endwidth endwidth] [-endfreq endfreq] [--] file\n");
-  fprintf(stderr,"%s","      Rednoise extraction routine.\n");
-  fprintf(stderr,"%s","    -startwidth: The initial windowing size.\n");
-  fprintf(stderr,"%s","                 1 int value between 2 and 50\n");
-  fprintf(stderr,"%s","                 default: `6'\n");
-  fprintf(stderr,"%s","      -endwidth: The final windowing size.\n");
-  fprintf(stderr,"%s","                 1 int value between 50 and 500\n");
-  fprintf(stderr,"%s","                 default: `100'\n");
-  fprintf(stderr,"%s","       -endfreq: The highest frequency where the windowing increases.\n");
-  fprintf(stderr,"%s","                 1 double value between 0.1 and 10\n");
-  fprintf(stderr,"%s","                 default: `6'\n");
-  fprintf(stderr,"%s","           file: Input '.fft' file.\n");
-  fprintf(stderr,"%s","                 1 value\n");
-  fprintf(stderr,"%s","  version: 12Mar10\n");
-  fprintf(stderr,"%s","  ");
+  fprintf(stderr,"   [-startwidth startwidth] [-endwidth endwidth] [-endfreq endfreq] [--] file\n");
+  fprintf(stderr,"      Rednoise extraction routine.\n");
+  fprintf(stderr,"    -startwidth: The initial windowing size.\n");
+  fprintf(stderr,"                 1 int value between 2 and 50\n");
+  fprintf(stderr,"                 default: `6'\n");
+  fprintf(stderr,"      -endwidth: The final windowing size.\n");
+  fprintf(stderr,"                 1 int value between 50 and 500\n");
+  fprintf(stderr,"                 default: `100'\n");
+  fprintf(stderr,"       -endfreq: The highest frequency where the windowing increases.\n");
+  fprintf(stderr,"                 1 double value between 0.1 and 10\n");
+  fprintf(stderr,"                 default: `6'\n");
+  fprintf(stderr,"           file: Input '.fft' file.\n");
+  fprintf(stderr,"                 1 value\n");
+  fprintf(stderr,"  version: 22Jun15\n");
+  fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
 /**********************************************************************/

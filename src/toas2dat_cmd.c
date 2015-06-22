@@ -838,23 +838,23 @@ showOptionValues(void)
 void
 usage(void)
 {
-  fprintf(stderr,"%s","   -n numout -dt dt [-t0 t0] -o outfile [-text] [-float] [-sec] [--] file\n");
-  fprintf(stderr,"%s","      Converts TOAs into a binned time series.\n");
-  fprintf(stderr,"%s","        -n: The number of bins in the output time series\n");
-  fprintf(stderr,"%s","            1 int value between 0 and oo\n");
-  fprintf(stderr,"%s","       -dt: Time interval in seconds for output time bins\n");
-  fprintf(stderr,"%s","            1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","       -t0: Time for the start of bin 0 (same units as the TOAs)\n");
-  fprintf(stderr,"%s","            1 double value\n");
-  fprintf(stderr,"%s","        -o: Name of the output time series file\n");
-  fprintf(stderr,"%s","            1 char* value\n");
-  fprintf(stderr,"%s","     -text: TOAs are ASCII text (default is binary double)\n");
-  fprintf(stderr,"%s","    -float: TOAs are binary floats (default is binary double)\n");
-  fprintf(stderr,"%s","      -sec: TOA unit is seconds (default is days)\n");
-  fprintf(stderr,"%s","      file: Input TOA file name\n");
-  fprintf(stderr,"%s","            1 value\n");
-  fprintf(stderr,"%s","  version: 12Mar10\n");
-  fprintf(stderr,"%s","  ");
+  fprintf(stderr,"   -n numout -dt dt [-t0 t0] -o outfile [-text] [-float] [-sec] [--] file\n");
+  fprintf(stderr,"      Converts TOAs into a binned time series.\n");
+  fprintf(stderr,"        -n: The number of bins in the output time series\n");
+  fprintf(stderr,"            1 int value between 0 and oo\n");
+  fprintf(stderr,"       -dt: Time interval in seconds for output time bins\n");
+  fprintf(stderr,"            1 double value between 0 and oo\n");
+  fprintf(stderr,"       -t0: Time for the start of bin 0 (same units as the TOAs)\n");
+  fprintf(stderr,"            1 double value\n");
+  fprintf(stderr,"        -o: Name of the output time series file\n");
+  fprintf(stderr,"            1 char* value\n");
+  fprintf(stderr,"     -text: TOAs are ASCII text (default is binary double)\n");
+  fprintf(stderr,"    -float: TOAs are binary floats (default is binary double)\n");
+  fprintf(stderr,"      -sec: TOA unit is seconds (default is days)\n");
+  fprintf(stderr,"      file: Input TOA file name\n");
+  fprintf(stderr,"            1 value\n");
+  fprintf(stderr,"  version: 22Jun15\n");
+  fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
 /**********************************************************************/

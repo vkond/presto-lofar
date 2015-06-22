@@ -816,21 +816,21 @@ showOptionValues(void)
 void
 usage(void)
 {
-  fprintf(stderr,"%s","   [-fwd] [-inv] [-del] [-disk] [-mem] [-tmpdir tmpdir] [-outdir outdir] [--] infiles ...\n");
-  fprintf(stderr,"%s","      Perform a single-precision FFT of real data or its inverse\n");
-  fprintf(stderr,"%s","       -fwd: Force an forward FFT (sign=-1) to be performed\n");
-  fprintf(stderr,"%s","       -inv: Force an inverse FFT (sign=+1) to be performed\n");
-  fprintf(stderr,"%s","       -del: Delete the original file(s) when performing the FFT\n");
-  fprintf(stderr,"%s","      -disk: Force the use of the out-of-core memory FFT\n");
-  fprintf(stderr,"%s","       -mem: Force the use of the in-core memory FFT\n");
-  fprintf(stderr,"%s","    -tmpdir: Scratch directory for temp file(s) in out-of-core FFT\n");
-  fprintf(stderr,"%s","             1 char* value\n");
-  fprintf(stderr,"%s","    -outdir: Directory where result file(s) will reside\n");
-  fprintf(stderr,"%s","             1 char* value\n");
-  fprintf(stderr,"%s","    infiles: Input data file(s)\n");
-  fprintf(stderr,"%s","             1...16 values\n");
-  fprintf(stderr,"%s","  version: 12Mar10\n");
-  fprintf(stderr,"%s","  ");
+  fprintf(stderr,"   [-fwd] [-inv] [-del] [-disk] [-mem] [-tmpdir tmpdir] [-outdir outdir] [--] infiles ...\n");
+  fprintf(stderr,"      Perform a single-precision FFT of real data or its inverse\n");
+  fprintf(stderr,"       -fwd: Force an forward FFT (sign=-1) to be performed\n");
+  fprintf(stderr,"       -inv: Force an inverse FFT (sign=+1) to be performed\n");
+  fprintf(stderr,"       -del: Delete the original file(s) when performing the FFT\n");
+  fprintf(stderr,"      -disk: Force the use of the out-of-core memory FFT\n");
+  fprintf(stderr,"       -mem: Force the use of the in-core memory FFT\n");
+  fprintf(stderr,"    -tmpdir: Scratch directory for temp file(s) in out-of-core FFT\n");
+  fprintf(stderr,"             1 char* value\n");
+  fprintf(stderr,"    -outdir: Directory where result file(s) will reside\n");
+  fprintf(stderr,"             1 char* value\n");
+  fprintf(stderr,"    infiles: Input data file(s)\n");
+  fprintf(stderr,"             1...16 values\n");
+  fprintf(stderr,"  version: 22Jun15\n");
+  fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
 /**********************************************************************/

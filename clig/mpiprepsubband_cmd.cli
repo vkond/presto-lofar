@@ -45,7 +45,7 @@ Double  -dmstep dmstep  {The stepsize in dispersion measure to use(cm^-3 pc)} \
 Int     -numdms numdms  {The number of DMs to de-disperse} \
 	-r 1 128000 -d 10
 Int     -nsub   nsub    {The number of sub-bands to use} \
-	-r 1 4096 -d 32
+	-r 1 8192 -d 32
 Int     -downsamp downsamp {The number of neighboring bins to co-add} \
 	-r 1 64 -d 1
 String -mask    maskfile {File containing masking information to use}

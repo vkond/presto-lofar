@@ -22,6 +22,10 @@ char *Program;
 /*@-null*/
 
 static Cmdline cmd = {
+  /***** -ncpus: Number of processors to use with OpenMP */
+  /* ncpusP = */ 1,
+  /* ncpus = */ 1,
+  /* ncpusC = */ 1,
   /***** -o: Root of the output file names */
   /* outfileP = */ 0,
   /* outfile = */ (char*)0,
@@ -36,10 +40,6 @@ static Cmdline cmd = {
   /* spigotP = */ 0,
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   /* filterbankP = */ 0,
-#ifdef USELOFAR
-  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
-  /* lofarhdf5P = */ 0,
-#endif
   /***** -psrfits: Raw data in PSRFITS format */
   /* psrfitsP = */ 0,
   /***** -noweights: Do not apply PSRFITS weights */
@@ -825,6 +825,18 @@ showOptionValues(void)
 
   printf("Full command line is:\n`%s'\n", cmd.full_cmd_line);
 
+  /***** -ncpus: Number of processors to use with OpenMP */
+  if( !cmd.ncpusP ) {
+    printf("-ncpus not found.\n");
+  } else {
+    printf("-ncpus found:\n");
+    if( !cmd.ncpusC ) {
+      printf("  no values\n");
+    } else {
+      printf("  value = `%d'\n", cmd.ncpus);
+    }
+  }
+
   /***** -o: Root of the output file names */
   if( !cmd.outfileP ) {
     printf("-o not found.\n");
@@ -871,17 +883,6 @@ showOptionValues(void)
   } else {
     printf("-filterbank found:\n");
   }
-
-#ifdef USELOFAR
-
-  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
-  if( !cmd.lofarhdf5P ) {
-    printf("-lofarhdf5 not found.\n");
-  } else {
-    printf("-lofarhdf5 found:\n");
-  }
-
-#endif
 
   /***** -psrfits: Raw data in PSRFITS format */
   if( !cmd.psrfitsP ) {
@@ -1132,70 +1133,66 @@ showOptionValues(void)
 void
 usage(void)
 {
-#ifdef USELOFAR
-  fprintf(stderr,"%s","   -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-xwin] [-nocompute] [-rfixwin] [-rfips] [-time time] [-blocks blocks] [-timesig timesigma] [-freqsig freqsigma] [-chanfrac chantrigfrac] [-intfrac inttrigfrac] [-zapchan zapchanstr] [-zapints zapintsstr] [-mask maskfile] [--] infile ...\n");
-#else
-  fprintf(stderr,"%s","   -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-xwin] [-nocompute] [-rfixwin] [-rfips] [-time time] [-blocks blocks] [-timesig timesigma] [-freqsig freqsigma] [-chanfrac chantrigfrac] [-intfrac inttrigfrac] [-zapchan zapchanstr] [-zapints zapintsstr] [-mask maskfile] [--] infile ...\n");
-#endif
-  fprintf(stderr,"%s","      Examines radio data for narrow and wide band interference as well as problems with channels\n");
-  fprintf(stderr,"%s","             -o: Root of the output file names\n");
-  fprintf(stderr,"%s","                 1 char* value\n");
-  fprintf(stderr,"%s","          -pkmb: Raw data in Parkes Multibeam format\n");
-  fprintf(stderr,"%s","          -gmrt: Raw data in GMRT Phased Array format\n");
-  fprintf(stderr,"%s","          -bcpm: Raw data in Berkeley-Caltech Pulsar Machine (BPP) format\n");
-  fprintf(stderr,"%s","        -spigot: Raw data in Caltech-NRAO Spigot Card format\n");
-  fprintf(stderr,"%s","    -filterbank: Raw data in SIGPROC filterbank format\n");
-#ifdef USELOFAR
-  fprintf(stderr,"%s","     -lofarhdf5: Raw data in LOFARHDF5 format\n");
-#endif
-  fprintf(stderr,"%s","       -psrfits: Raw data in PSRFITS format\n");
-  fprintf(stderr,"%s","     -noweights: Do not apply PSRFITS weights\n");
-  fprintf(stderr,"%s","      -noscales: Do not apply PSRFITS scales\n");
-  fprintf(stderr,"%s","     -nooffsets: Do not apply PSRFITS offsets\n");
-  fprintf(stderr,"%s","          -wapp: Raw data in Wideband Arecibo Pulsar Processor (WAPP) format\n");
-  fprintf(stderr,"%s","        -window: Window correlator lags with a Hamming window before FFTing\n");
-  fprintf(stderr,"%s","      -numwapps: Number of WAPPs used with contiguous frequencies\n");
-  fprintf(stderr,"%s","                 1 int value between 1 and 8\n");
-  fprintf(stderr,"%s","                 default: `1'\n");
-  fprintf(stderr,"%s","            -if: A specific IF to use if available (summed IFs is the default)\n");
-  fprintf(stderr,"%s","                 1 int value between 0 and 1\n");
-  fprintf(stderr,"%s","          -clip: Time-domain sigma to use for clipping (0.0 = no clipping, 6.0 = default\n");
-  fprintf(stderr,"%s","                 1 float value between 0 and 1000.0\n");
-  fprintf(stderr,"%s","                 default: `6.0'\n");
-  fprintf(stderr,"%s","        -noclip: Do not clip the data.  (The default is to _always_ clip!)\n");
-  fprintf(stderr,"%s","        -invert: For rawdata, flip (or invert) the band\n");
-  fprintf(stderr,"%s","        -zerodm: Subtract the mean of all channels from each sample (i.e. remove zero DM)\n");
-  fprintf(stderr,"%s","          -xwin: Draw plots to the screen as well as a PS file\n");
-  fprintf(stderr,"%s","     -nocompute: Just plot and remake the mask\n");
-  fprintf(stderr,"%s","       -rfixwin: Show the RFI instances on screen\n");
-  fprintf(stderr,"%s","         -rfips: Plot the RFI instances in a PS file\n");
-  fprintf(stderr,"%s","          -time: Seconds to integrate for stats and FFT calcs (use this or -blocks)\n");
-  fprintf(stderr,"%s","                 1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","                 default: `30.0'\n");
-  fprintf(stderr,"%s","        -blocks: Number of blocks (usually 16-1024 samples) to integrate for stats and FFT calcs\n");
-  fprintf(stderr,"%s","                 1 int value between 1 and oo\n");
-  fprintf(stderr,"%s","       -timesig: The +/-sigma cutoff to reject time-domain chunks\n");
-  fprintf(stderr,"%s","                 1 float value between 0 and oo\n");
-  fprintf(stderr,"%s","                 default: `10'\n");
-  fprintf(stderr,"%s","       -freqsig: The +/-sigma cutoff to reject freq-domain chunks\n");
-  fprintf(stderr,"%s","                 1 float value between 0 and oo\n");
-  fprintf(stderr,"%s","                 default: `4'\n");
-  fprintf(stderr,"%s","      -chanfrac: The fraction of bad channels that will mask a full interval\n");
-  fprintf(stderr,"%s","                 1 float value between 0.0 and 1.0\n");
-  fprintf(stderr,"%s","                 default: `0.7'\n");
-  fprintf(stderr,"%s","       -intfrac: The fraction of bad intervals that will mask a full channel\n");
-  fprintf(stderr,"%s","                 1 float value between 0.0 and 1.0\n");
-  fprintf(stderr,"%s","                 default: `0.3'\n");
-  fprintf(stderr,"%s","       -zapchan: Comma separated string (no spaces!) of channels to explicitly remove from analysis (zero-offset).  Ranges are specified by min:max[:step]\n");
-  fprintf(stderr,"%s","                 1 char* value\n");
-  fprintf(stderr,"%s","       -zapints: Comma separated string (no spaces!) of intervals to explicitly remove from analysis (zero-offset).  Ranges are specified by min:max[:step]\n");
-  fprintf(stderr,"%s","                 1 char* value\n");
-  fprintf(stderr,"%s","          -mask: File containing masking information to use\n");
-  fprintf(stderr,"%s","                 1 char* value\n");
-  fprintf(stderr,"%s","         infile: Input data file name(s).\n");
-  fprintf(stderr,"%s","                 1...16384 values\n");
-  fprintf(stderr,"%s","  version: 31Aug12\n");
-  fprintf(stderr,"%s","  ");
+  fprintf(stderr,"   [-ncpus ncpus] -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-xwin] [-nocompute] [-rfixwin] [-rfips] [-time time] [-blocks blocks] [-timesig timesigma] [-freqsig freqsigma] [-chanfrac chantrigfrac] [-intfrac inttrigfrac] [-zapchan zapchanstr] [-zapints zapintsstr] [-mask maskfile] [--] infile ...\n");
+  fprintf(stderr,"      Examines radio data for narrow and wide band interference as well as problems with channels\n");
+  fprintf(stderr,"         -ncpus: Number of processors to use with OpenMP\n");
+  fprintf(stderr,"                 1 int value between 1 and oo\n");
+  fprintf(stderr,"                 default: `1'\n");
+  fprintf(stderr,"             -o: Root of the output file names\n");
+  fprintf(stderr,"                 1 char* value\n");
+  fprintf(stderr,"          -pkmb: Raw data in Parkes Multibeam format\n");
+  fprintf(stderr,"          -gmrt: Raw data in GMRT Phased Array format\n");
+  fprintf(stderr,"          -bcpm: Raw data in Berkeley-Caltech Pulsar Machine (BPP) format\n");
+  fprintf(stderr,"        -spigot: Raw data in Caltech-NRAO Spigot Card format\n");
+  fprintf(stderr,"    -filterbank: Raw data in SIGPROC filterbank format\n");
+  fprintf(stderr,"       -psrfits: Raw data in PSRFITS format\n");
+  fprintf(stderr,"     -noweights: Do not apply PSRFITS weights\n");
+  fprintf(stderr,"      -noscales: Do not apply PSRFITS scales\n");
+  fprintf(stderr,"     -nooffsets: Do not apply PSRFITS offsets\n");
+  fprintf(stderr,"          -wapp: Raw data in Wideband Arecibo Pulsar Processor (WAPP) format\n");
+  fprintf(stderr,"        -window: Window correlator lags with a Hamming window before FFTing\n");
+  fprintf(stderr,"      -numwapps: Number of WAPPs used with contiguous frequencies\n");
+  fprintf(stderr,"                 1 int value between 1 and 8\n");
+  fprintf(stderr,"                 default: `1'\n");
+  fprintf(stderr,"            -if: A specific IF to use if available (summed IFs is the default)\n");
+  fprintf(stderr,"                 1 int value between 0 and 1\n");
+  fprintf(stderr,"          -clip: Time-domain sigma to use for clipping (0.0 = no clipping, 6.0 = default\n");
+  fprintf(stderr,"                 1 float value between 0 and 1000.0\n");
+  fprintf(stderr,"                 default: `6.0'\n");
+  fprintf(stderr,"        -noclip: Do not clip the data.  (The default is to _always_ clip!)\n");
+  fprintf(stderr,"        -invert: For rawdata, flip (or invert) the band\n");
+  fprintf(stderr,"        -zerodm: Subtract the mean of all channels from each sample (i.e. remove zero DM)\n");
+  fprintf(stderr,"          -xwin: Draw plots to the screen as well as a PS file\n");
+  fprintf(stderr,"     -nocompute: Just plot and remake the mask\n");
+  fprintf(stderr,"       -rfixwin: Show the RFI instances on screen\n");
+  fprintf(stderr,"         -rfips: Plot the RFI instances in a PS file\n");
+  fprintf(stderr,"          -time: Seconds to integrate for stats and FFT calcs (use this or -blocks)\n");
+  fprintf(stderr,"                 1 double value between 0 and oo\n");
+  fprintf(stderr,"                 default: `30.0'\n");
+  fprintf(stderr,"        -blocks: Number of blocks (usually 16-1024 samples) to integrate for stats and FFT calcs\n");
+  fprintf(stderr,"                 1 int value between 1 and oo\n");
+  fprintf(stderr,"       -timesig: The +/-sigma cutoff to reject time-domain chunks\n");
+  fprintf(stderr,"                 1 float value between 0 and oo\n");
+  fprintf(stderr,"                 default: `10'\n");
+  fprintf(stderr,"       -freqsig: The +/-sigma cutoff to reject freq-domain chunks\n");
+  fprintf(stderr,"                 1 float value between 0 and oo\n");
+  fprintf(stderr,"                 default: `4'\n");
+  fprintf(stderr,"      -chanfrac: The fraction of bad channels that will mask a full interval\n");
+  fprintf(stderr,"                 1 float value between 0.0 and 1.0\n");
+  fprintf(stderr,"                 default: `0.7'\n");
+  fprintf(stderr,"       -intfrac: The fraction of bad intervals that will mask a full channel\n");
+  fprintf(stderr,"                 1 float value between 0.0 and 1.0\n");
+  fprintf(stderr,"                 default: `0.3'\n");
+  fprintf(stderr,"       -zapchan: Comma separated string (no spaces!) of channels to explicitly remove from analysis (zero-offset).  Ranges are specified by min:max[:step]\n");
+  fprintf(stderr,"                 1 char* value\n");
+  fprintf(stderr,"       -zapints: Comma separated string (no spaces!) of intervals to explicitly remove from analysis (zero-offset).  Ranges are specified by min:max[:step]\n");
+  fprintf(stderr,"                 1 char* value\n");
+  fprintf(stderr,"          -mask: File containing masking information to use\n");
+  fprintf(stderr,"                 1 char* value\n");
+  fprintf(stderr,"         infile: Input data file name(s).\n");
+  fprintf(stderr,"                 1...16384 values\n");
+  fprintf(stderr,"  version: 22Jun15\n");
+  fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
 /**********************************************************************/
@@ -1210,6 +1207,15 @@ parseCmdline(int argc, char **argv)
   for(i=1, cmd.argc=1; i<argc; i++) {
     if( 0==strcmp("--", argv[i]) ) {
       while( ++i<argc ) argv[cmd.argc++] = argv[i];
+      continue;
+    }
+
+    if( 0==strcmp("-ncpus", argv[i]) ) {
+      int keep = i;
+      cmd.ncpusP = 1;
+      i = getIntOpt(argc, argv, i, &cmd.ncpus, 1);
+      cmd.ncpusC = i-keep;
+      checkIntHigher("-ncpus", &cmd.ncpus, cmd.ncpusC, 1);
       continue;
     }
 
@@ -1245,13 +1251,6 @@ parseCmdline(int argc, char **argv)
       cmd.filterbankP = 1;
       continue;
     }
-
-#ifdef USELOFAR
-    if( 0==strcmp("-lofarhdf5", argv[i]) ) {
-      cmd.lofarhdf5P = 1;
-      continue;
-    }
-#endif
 
     if( 0==strcmp("-psrfits", argv[i]) ) {
       cmd.psrfitsP = 1;

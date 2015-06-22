@@ -36,10 +36,8 @@ static Cmdline cmd = {
   /* spigotP = */ 0,
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   /* filterbankP = */ 0,
-#ifdef USELOFAR
   /***** -lofarhdf5: Raw data in LOFARHDF5 format */
   /* lofarhdf5P = */ 0,
-#endif
   /***** -psrfits: Raw data in PSRFITS format */
   /* psrfitsP = */ 0,
   /***** -noweights: Do not apply PSRFITS weights */
@@ -1012,16 +1010,12 @@ showOptionValues(void)
     printf("-filterbank found:\n");
   }
 
-#ifdef USELOFAR
-
   /***** -lofarhdf5: Raw data in LOFARHDF5 format */
   if( !cmd.lofarhdf5P ) {
     printf("-lofarhdf5 not found.\n");
   } else {
     printf("-lofarhdf5 found:\n");
   }
-
-#endif
 
   /***** -psrfits: Raw data in PSRFITS format */
   if( !cmd.psrfitsP ) {
@@ -1736,159 +1730,153 @@ showOptionValues(void)
 void
 usage(void)
 {
-#ifdef USELOFAR
-  fprintf(stderr,"%s","   [-o outfile] [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-topo] [-invert] [-zerodm] [-absphase] [-barypolycos] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-DE405] [-noxwin] [-runavg] [-fine] [-coarse] [-slow] [-searchpdd] [-searchfdd] [-nosearch] [-nopsearch] [-nopdsearch] [-nodmsearch] [-scaleparts] [-allgrey] [-fixchi] [-justprofs] [-dm dm] [-n proflen] [-nsub nsub] [-npart npart] [-pstep pstep] [-pdstep pdstep] [-dmstep dmstep] [-npfact npfact] [-ndmfact ndmfact] [-p p] [-pd pd] [-pdd pdd] [-f f] [-fd fd] [-fdd fdd] [-pfact pfact] [-ffact ffact] [-phs phs] [-start startT] [-end endT] [-psr psrname] [-par parname] [-polycos polycofile] [-timing timing] [-rzwcand rzwcand] [-rzwfile rzwfile] [-accelcand accelcand] [-accelfile accelfile] [-bin] [-pb pb] [-x asinic] [-e e] [-To To] [-w w] [-wdot wdot] [-mask maskfile] [-events] [-days] [-mjds] [-double] [-offset offset] [--] infile ...\n");
-#else
-  fprintf(stderr,"%s","   [-o outfile] [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-topo] [-invert] [-zerodm] [-absphase] [-barypolycos] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-DE405] [-noxwin] [-runavg] [-fine] [-coarse] [-slow] [-searchpdd] [-searchfdd] [-nosearch] [-nopsearch] [-nopdsearch] [-nodmsearch] [-scaleparts] [-allgrey] [-fixchi] [-justprofs] [-dm dm] [-n proflen] [-nsub nsub] [-npart npart] [-pstep pstep] [-pdstep pdstep] [-dmstep dmstep] [-npfact npfact] [-ndmfact ndmfact] [-p p] [-pd pd] [-pdd pdd] [-f f] [-fd fd] [-fdd fdd] [-pfact pfact] [-ffact ffact] [-phs phs] [-start startT] [-end endT] [-psr psrname] [-par parname] [-polycos polycofile] [-timing timing] [-rzwcand rzwcand] [-rzwfile rzwfile] [-accelcand accelcand] [-accelfile accelfile] [-bin] [-pb pb] [-x asinic] [-e e] [-To To] [-w w] [-wdot wdot] [-mask maskfile] [-events] [-days] [-mjds] [-double] [-offset offset] [--] infile ...\n");
-#endif
-  fprintf(stderr,"%s","      Prepares (if required) and folds raw radio data, standard time series, or events.\n");
-  fprintf(stderr,"%s","              -o: Root of the output file names\n");
-  fprintf(stderr,"%s","                  1 char* value\n");
-  fprintf(stderr,"%s","           -pkmb: Raw data in Parkes Multibeam format\n");
-  fprintf(stderr,"%s","           -gmrt: Raw data in GMRT Phased Array format\n");
-  fprintf(stderr,"%s","           -bcpm: Raw data in Berkeley-Caltech Pulsar Machine (BPP) format\n");
-  fprintf(stderr,"%s","         -spigot: Raw data in Caltech-NRAO Spigot Card format\n");
-  fprintf(stderr,"%s","     -filterbank: Raw data in SIGPROC filterbank format\n");
-#ifdef USELOFAR
-  fprintf(stderr,"%s","      -lofarhdf5: Raw data in LOFARHDF5 format\n");
-#endif
-  fprintf(stderr,"%s","        -psrfits: Raw data in PSRFITS format\n");
-  fprintf(stderr,"%s","      -noweights: Do not apply PSRFITS weights\n");
-  fprintf(stderr,"%s","       -noscales: Do not apply PSRFITS scales\n");
-  fprintf(stderr,"%s","      -nooffsets: Do not apply PSRFITS offsets\n");
-  fprintf(stderr,"%s","           -wapp: Raw data in Wideband Arecibo Pulsar Processor (WAPP) format\n");
-  fprintf(stderr,"%s","         -window: Window correlator lags with a Hamming window before FFTing\n");
-  fprintf(stderr,"%s","           -topo: Fold the data topocentrically (i.e. don't barycenter)\n");
-  fprintf(stderr,"%s","         -invert: For rawdata, flip (or invert) the band\n");
-  fprintf(stderr,"%s","         -zerodm: Subtract the mean of all channels from each sample (i.e. remove zero DM)\n");
-  fprintf(stderr,"%s","       -absphase: Use the absolute phase associated with polycos\n");
-  fprintf(stderr,"%s","    -barypolycos: Force the use of polycos for barycentered events\n");
-  fprintf(stderr,"%s","       -numwapps: Number of WAPPs used with contiguous frequencies\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and 8\n");
-  fprintf(stderr,"%s","                  default: `1'\n");
-  fprintf(stderr,"%s","             -if: A specific IF to use if available (summed IFs is the default)\n");
-  fprintf(stderr,"%s","                  1 int value between 0 and 1\n");
-  fprintf(stderr,"%s","           -clip: Time-domain sigma to use for clipping (0.0 = no clipping, 6.0 = default\n");
-  fprintf(stderr,"%s","                  1 float value between 0 and 1000.0\n");
-  fprintf(stderr,"%s","                  default: `6.0'\n");
-  fprintf(stderr,"%s","         -noclip: Do not clip the data.  (The default is to _always_ clip!)\n");
-  fprintf(stderr,"%s","          -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default)\n");
-  fprintf(stderr,"%s","         -noxwin: Do not show the result plots on-screen, only make postscript files\n");
-  fprintf(stderr,"%s","         -runavg: Subtract each blocks average as it is read (single channel data only)\n");
-  fprintf(stderr,"%s","           -fine: A finer gridding in the p/pdot plane (for well known p and pdot)\n");
-  fprintf(stderr,"%s","         -coarse: A coarser gridding in the p/pdot plane (for uknown p and pdot)\n");
-  fprintf(stderr,"%s","           -slow: Sets useful flags for slow pulsars\n");
-  fprintf(stderr,"%s","      -searchpdd: Search p-dotdots as well as p and p-dots\n");
-  fprintf(stderr,"%s","      -searchfdd: Search f-dotdots as well as f and f-dots\n");
-  fprintf(stderr,"%s","       -nosearch: Show but do not search the p/pdot and/or DM phase spaces\n");
-  fprintf(stderr,"%s","      -nopsearch: Show but do not search over period\n");
-  fprintf(stderr,"%s","     -nopdsearch: Show but do not search over p-dot\n");
-  fprintf(stderr,"%s","     -nodmsearch: Show but do not search over DM\n");
-  fprintf(stderr,"%s","     -scaleparts: Scale the part profiles independently\n");
-  fprintf(stderr,"%s","        -allgrey: Make all the images greyscale instead of color\n");
-  fprintf(stderr,"%s","         -fixchi: Adjust the reduced chi^2 values so that off-pulse reduced chi^2 = 1\n");
-  fprintf(stderr,"%s","      -justprofs: Only output the profile portions of the plot\n");
-  fprintf(stderr,"%s","             -dm: The central DM of the search (cm^-3 pc)\n");
-  fprintf(stderr,"%s","                  1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","                  default: `0'\n");
-  fprintf(stderr,"%s","              -n: The number of bins in the profile.  Defaults to the number of sampling bins which correspond to one folded period\n");
-  fprintf(stderr,"%s","                  1 int value\n");
-  fprintf(stderr,"%s","           -nsub: The number of sub-bands to use for the DM search\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and 4096\n");
-  fprintf(stderr,"%s","                  default: `32'\n");
-  fprintf(stderr,"%s","          -npart: The number of sub-integrations to use for the period search\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and 4096\n");
-  fprintf(stderr,"%s","                  default: `64'\n");
-  fprintf(stderr,"%s","          -pstep: The minimum period stepsize over the observation in profile bins\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and 10\n");
-  fprintf(stderr,"%s","                  default: `2'\n");
-  fprintf(stderr,"%s","         -pdstep: The minimum P-dot stepsize over the observation in profile bins\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and 20\n");
-  fprintf(stderr,"%s","                  default: `4'\n");
-  fprintf(stderr,"%s","         -dmstep: The minimum DM stepsize over the observation in profile bins\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and 10\n");
-  fprintf(stderr,"%s","                  default: `2'\n");
-  fprintf(stderr,"%s","         -npfact: 2 * npfact * proflen + 1 periods and p-dots will be searched\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and 10\n");
-  fprintf(stderr,"%s","                  default: `2'\n");
-  fprintf(stderr,"%s","        -ndmfact: 2 * ndmfact * proflen + 1 DMs will be searched\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and 1000\n");
-  fprintf(stderr,"%s","                  default: `3'\n");
-  fprintf(stderr,"%s","              -p: The nominative folding period (s)\n");
-  fprintf(stderr,"%s","                  1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","             -pd: The nominative period derivative (s/s)\n");
-  fprintf(stderr,"%s","                  1 double value\n");
-  fprintf(stderr,"%s","                  default: `0.0'\n");
-  fprintf(stderr,"%s","            -pdd: The nominative period 2nd derivative (s/s^2)\n");
-  fprintf(stderr,"%s","                  1 double value\n");
-  fprintf(stderr,"%s","                  default: `0.0'\n");
-  fprintf(stderr,"%s","              -f: The nominative folding frequency (hz)\n");
-  fprintf(stderr,"%s","                  1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","             -fd: The nominative frequency derivative (hz/s)\n");
-  fprintf(stderr,"%s","                  1 double value\n");
-  fprintf(stderr,"%s","                  default: `0'\n");
-  fprintf(stderr,"%s","            -fdd: The nominative frequency 2nd derivative (hz/s^2)\n");
-  fprintf(stderr,"%s","                  1 double value\n");
-  fprintf(stderr,"%s","                  default: `0'\n");
-  fprintf(stderr,"%s","          -pfact: A factor to multiple the candidate p and p-dot by\n");
-  fprintf(stderr,"%s","                  1 double value between 0.0 and 100.0\n");
-  fprintf(stderr,"%s","                  default: `1.0'\n");
-  fprintf(stderr,"%s","          -ffact: A factor to multiple the candidate f and f-dot by\n");
-  fprintf(stderr,"%s","                  1 double value between 0.0 and 100.0\n");
-  fprintf(stderr,"%s","                  default: `1.0'\n");
-  fprintf(stderr,"%s","            -phs: Offset phase for the profil\n");
-  fprintf(stderr,"%s","                  1 double value between 0.0 and 1.0\n");
-  fprintf(stderr,"%s","                  default: `0.0'\n");
-  fprintf(stderr,"%s","          -start: The folding start time as a fraction of the full obs\n");
-  fprintf(stderr,"%s","                  1 double value between 0.0 and 1.0\n");
-  fprintf(stderr,"%s","                  default: `0.0'\n");
-  fprintf(stderr,"%s","            -end: The folding end time as a fraction of the full obs\n");
-  fprintf(stderr,"%s","                  1 double value between 0.0 and 1.0\n");
-  fprintf(stderr,"%s","                  default: `1.0'\n");
-  fprintf(stderr,"%s","            -psr: Name of pulsar to fold (do not include J or B)\n");
-  fprintf(stderr,"%s","                  1 char* value\n");
-  fprintf(stderr,"%s","            -par: Name of a TEMPO par file from which to get PSR params\n");
-  fprintf(stderr,"%s","                  1 char* value\n");
-  fprintf(stderr,"%s","        -polycos: File containing TEMPO polycos for psrname (not required)\n");
-  fprintf(stderr,"%s","                  1 char* value\n");
-  fprintf(stderr,"%s","         -timing: Sets useful flags for TOA generation. Generates polycos (if required) based on the par file specified as the argument. (This means you don't need the -par or -psr commands!)\n");
-  fprintf(stderr,"%s","                  1 char* value\n");
-  fprintf(stderr,"%s","        -rzwcand: The candidate number to fold from 'infile'_rzw.cand\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and oo\n");
-  fprintf(stderr,"%s","        -rzwfile: Name of the rzw search '.cand' file to use (with suffix)\n");
-  fprintf(stderr,"%s","                  1 char* value\n");
-  fprintf(stderr,"%s","      -accelcand: The candidate number to fold from 'infile'_rzw.cand\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and oo\n");
-  fprintf(stderr,"%s","      -accelfile: Name of the accel search '.cand' file to use (with suffix)\n");
-  fprintf(stderr,"%s","                  1 char* value\n");
-  fprintf(stderr,"%s","            -bin: Fold a binary pulsar.  Must include all of the following parameters\n");
-  fprintf(stderr,"%s","             -pb: The orbital period (s)\n");
-  fprintf(stderr,"%s","                  1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","              -x: The projected orbital semi-major axis (lt-sec)\n");
-  fprintf(stderr,"%s","                  1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","              -e: The orbital eccentricity\n");
-  fprintf(stderr,"%s","                  1 double value between 0 and 0.9999999\n");
-  fprintf(stderr,"%s","                  default: `0'\n");
-  fprintf(stderr,"%s","             -To: The time of periastron passage (MJD)\n");
-  fprintf(stderr,"%s","                  1 double value between 0 and oo\n");
-  fprintf(stderr,"%s","              -w: Longitude of periastron (deg)\n");
-  fprintf(stderr,"%s","                  1 double value between 0 and 360\n");
-  fprintf(stderr,"%s","           -wdot: Rate of advance of periastron (deg/yr)\n");
-  fprintf(stderr,"%s","                  1 double value\n");
-  fprintf(stderr,"%s","                  default: `0'\n");
-  fprintf(stderr,"%s","           -mask: File containing masking information to use\n");
-  fprintf(stderr,"%s","                  1 char* value\n");
-  fprintf(stderr,"%s","         -events: Use a event file instead of a time series (.dat) file\n");
-  fprintf(stderr,"%s","           -days: Events are in days since the EPOCH in the '.inf' file (default is seconds)\n");
-  fprintf(stderr,"%s","           -mjds: Events are in MJDs\n");
-  fprintf(stderr,"%s","         -double: Events are in binary double precision (default is ASCII)\n");
-  fprintf(stderr,"%s","         -offset: A time offset to add to the 1st event in the same units as the events\n");
-  fprintf(stderr,"%s","                  1 double value\n");
-  fprintf(stderr,"%s","                  default: `0'\n");
-  fprintf(stderr,"%s","          infile: Input data file name.  If the data is not in a regognized raw data format, it should be a file containing a time series of single-precision floats or short ints.  In this case a '.inf' file with the same root filename must also exist (Note that this means that the input data file must have a suffix that starts with a period)\n");
-  fprintf(stderr,"%s","                  1...16384 values\n");
-  fprintf(stderr,"%s","  version: 09Aug14\n");
-  fprintf(stderr,"%s","  ");
+  fprintf(stderr,"   [-o outfile] [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-topo] [-invert] [-zerodm] [-absphase] [-barypolycos] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-DE405] [-noxwin] [-runavg] [-fine] [-coarse] [-slow] [-searchpdd] [-searchfdd] [-nosearch] [-nopsearch] [-nopdsearch] [-nodmsearch] [-scaleparts] [-allgrey] [-fixchi] [-justprofs] [-dm dm] [-n proflen] [-nsub nsub] [-npart npart] [-pstep pstep] [-pdstep pdstep] [-dmstep dmstep] [-npfact npfact] [-ndmfact ndmfact] [-p p] [-pd pd] [-pdd pdd] [-f f] [-fd fd] [-fdd fdd] [-pfact pfact] [-ffact ffact] [-phs phs] [-start startT] [-end endT] [-psr psrname] [-par parname] [-polycos polycofile] [-timing timing] [-rzwcand rzwcand] [-rzwfile rzwfile] [-accelcand accelcand] [-accelfile accelfile] [-bin] [-pb pb] [-x asinic] [-e e] [-To To] [-w w] [-wdot wdot] [-mask maskfile] [-events] [-days] [-mjds] [-double] [-offset offset] [--] infile ...\n");
+  fprintf(stderr,"      Prepares (if required) and folds raw radio data, standard time series, or events.\n");
+  fprintf(stderr,"              -o: Root of the output file names\n");
+  fprintf(stderr,"                  1 char* value\n");
+  fprintf(stderr,"           -pkmb: Raw data in Parkes Multibeam format\n");
+  fprintf(stderr,"           -gmrt: Raw data in GMRT Phased Array format\n");
+  fprintf(stderr,"           -bcpm: Raw data in Berkeley-Caltech Pulsar Machine (BPP) format\n");
+  fprintf(stderr,"         -spigot: Raw data in Caltech-NRAO Spigot Card format\n");
+  fprintf(stderr,"     -filterbank: Raw data in SIGPROC filterbank format\n");
+  fprintf(stderr,"      -lofarhdf5: Raw data in LOFARHDF5 format\n");
+  fprintf(stderr,"        -psrfits: Raw data in PSRFITS format\n");
+  fprintf(stderr,"      -noweights: Do not apply PSRFITS weights\n");
+  fprintf(stderr,"       -noscales: Do not apply PSRFITS scales\n");
+  fprintf(stderr,"      -nooffsets: Do not apply PSRFITS offsets\n");
+  fprintf(stderr,"           -wapp: Raw data in Wideband Arecibo Pulsar Processor (WAPP) format\n");
+  fprintf(stderr,"         -window: Window correlator lags with a Hamming window before FFTing\n");
+  fprintf(stderr,"           -topo: Fold the data topocentrically (i.e. don't barycenter)\n");
+  fprintf(stderr,"         -invert: For rawdata, flip (or invert) the band\n");
+  fprintf(stderr,"         -zerodm: Subtract the mean of all channels from each sample (i.e. remove zero DM)\n");
+  fprintf(stderr,"       -absphase: Use the absolute phase associated with polycos\n");
+  fprintf(stderr,"    -barypolycos: Force the use of polycos for barycentered events\n");
+  fprintf(stderr,"       -numwapps: Number of WAPPs used with contiguous frequencies\n");
+  fprintf(stderr,"                  1 int value between 1 and 8\n");
+  fprintf(stderr,"                  default: `1'\n");
+  fprintf(stderr,"             -if: A specific IF to use if available (summed IFs is the default)\n");
+  fprintf(stderr,"                  1 int value between 0 and 1\n");
+  fprintf(stderr,"           -clip: Time-domain sigma to use for clipping (0.0 = no clipping, 6.0 = default\n");
+  fprintf(stderr,"                  1 float value between 0 and 1000.0\n");
+  fprintf(stderr,"                  default: `6.0'\n");
+  fprintf(stderr,"         -noclip: Do not clip the data.  (The default is to _always_ clip!)\n");
+  fprintf(stderr,"          -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default)\n");
+  fprintf(stderr,"         -noxwin: Do not show the result plots on-screen, only make postscript files\n");
+  fprintf(stderr,"         -runavg: Subtract each blocks average as it is read (single channel data only)\n");
+  fprintf(stderr,"           -fine: A finer gridding in the p/pdot plane (for well known p and pdot)\n");
+  fprintf(stderr,"         -coarse: A coarser gridding in the p/pdot plane (for uknown p and pdot)\n");
+  fprintf(stderr,"           -slow: Sets useful flags for slow pulsars\n");
+  fprintf(stderr,"      -searchpdd: Search p-dotdots as well as p and p-dots\n");
+  fprintf(stderr,"      -searchfdd: Search f-dotdots as well as f and f-dots\n");
+  fprintf(stderr,"       -nosearch: Show but do not search the p/pdot and/or DM phase spaces\n");
+  fprintf(stderr,"      -nopsearch: Show but do not search over period\n");
+  fprintf(stderr,"     -nopdsearch: Show but do not search over p-dot\n");
+  fprintf(stderr,"     -nodmsearch: Show but do not search over DM\n");
+  fprintf(stderr,"     -scaleparts: Scale the part profiles independently\n");
+  fprintf(stderr,"        -allgrey: Make all the images greyscale instead of color\n");
+  fprintf(stderr,"         -fixchi: Adjust the reduced chi^2 values so that off-pulse reduced chi^2 = 1\n");
+  fprintf(stderr,"      -justprofs: Only output the profile portions of the plot\n");
+  fprintf(stderr,"             -dm: The central DM of the search (cm^-3 pc)\n");
+  fprintf(stderr,"                  1 double value between 0 and oo\n");
+  fprintf(stderr,"                  default: `0'\n");
+  fprintf(stderr,"              -n: The number of bins in the profile.  Defaults to the number of sampling bins which correspond to one folded period\n");
+  fprintf(stderr,"                  1 int value\n");
+  fprintf(stderr,"           -nsub: The number of sub-bands to use for the DM search\n");
+  fprintf(stderr,"                  1 int value between 1 and 8192\n");
+  fprintf(stderr,"                  default: `32'\n");
+  fprintf(stderr,"          -npart: The number of sub-integrations to use for the period search\n");
+  fprintf(stderr,"                  1 int value between 1 and 8192\n");
+  fprintf(stderr,"                  default: `64'\n");
+  fprintf(stderr,"          -pstep: The minimum period stepsize over the observation in profile bins\n");
+  fprintf(stderr,"                  1 int value between 1 and 10\n");
+  fprintf(stderr,"                  default: `2'\n");
+  fprintf(stderr,"         -pdstep: The minimum P-dot stepsize over the observation in profile bins\n");
+  fprintf(stderr,"                  1 int value between 1 and 20\n");
+  fprintf(stderr,"                  default: `4'\n");
+  fprintf(stderr,"         -dmstep: The minimum DM stepsize over the observation in profile bins\n");
+  fprintf(stderr,"                  1 int value between 1 and 10\n");
+  fprintf(stderr,"                  default: `2'\n");
+  fprintf(stderr,"         -npfact: 2 * npfact * proflen + 1 periods and p-dots will be searched\n");
+  fprintf(stderr,"                  1 int value between 1 and 10\n");
+  fprintf(stderr,"                  default: `2'\n");
+  fprintf(stderr,"        -ndmfact: 2 * ndmfact * proflen + 1 DMs will be searched\n");
+  fprintf(stderr,"                  1 int value between 1 and 1000\n");
+  fprintf(stderr,"                  default: `3'\n");
+  fprintf(stderr,"              -p: The nominative folding period (s)\n");
+  fprintf(stderr,"                  1 double value between 0 and oo\n");
+  fprintf(stderr,"             -pd: The nominative period derivative (s/s)\n");
+  fprintf(stderr,"                  1 double value\n");
+  fprintf(stderr,"                  default: `0.0'\n");
+  fprintf(stderr,"            -pdd: The nominative period 2nd derivative (s/s^2)\n");
+  fprintf(stderr,"                  1 double value\n");
+  fprintf(stderr,"                  default: `0.0'\n");
+  fprintf(stderr,"              -f: The nominative folding frequency (hz)\n");
+  fprintf(stderr,"                  1 double value between 0 and oo\n");
+  fprintf(stderr,"             -fd: The nominative frequency derivative (hz/s)\n");
+  fprintf(stderr,"                  1 double value\n");
+  fprintf(stderr,"                  default: `0'\n");
+  fprintf(stderr,"            -fdd: The nominative frequency 2nd derivative (hz/s^2)\n");
+  fprintf(stderr,"                  1 double value\n");
+  fprintf(stderr,"                  default: `0'\n");
+  fprintf(stderr,"          -pfact: A factor to multiple the candidate p and p-dot by\n");
+  fprintf(stderr,"                  1 double value between 0.0 and 100.0\n");
+  fprintf(stderr,"                  default: `1.0'\n");
+  fprintf(stderr,"          -ffact: A factor to multiple the candidate f and f-dot by\n");
+  fprintf(stderr,"                  1 double value between 0.0 and 100.0\n");
+  fprintf(stderr,"                  default: `1.0'\n");
+  fprintf(stderr,"            -phs: Offset phase for the profil\n");
+  fprintf(stderr,"                  1 double value between 0.0 and 1.0\n");
+  fprintf(stderr,"                  default: `0.0'\n");
+  fprintf(stderr,"          -start: The folding start time as a fraction of the full obs\n");
+  fprintf(stderr,"                  1 double value between 0.0 and 1.0\n");
+  fprintf(stderr,"                  default: `0.0'\n");
+  fprintf(stderr,"            -end: The folding end time as a fraction of the full obs\n");
+  fprintf(stderr,"                  1 double value between 0.0 and 1.0\n");
+  fprintf(stderr,"                  default: `1.0'\n");
+  fprintf(stderr,"            -psr: Name of pulsar to fold (do not include J or B)\n");
+  fprintf(stderr,"                  1 char* value\n");
+  fprintf(stderr,"            -par: Name of a TEMPO par file from which to get PSR params\n");
+  fprintf(stderr,"                  1 char* value\n");
+  fprintf(stderr,"        -polycos: File containing TEMPO polycos for psrname (not required)\n");
+  fprintf(stderr,"                  1 char* value\n");
+  fprintf(stderr,"         -timing: Sets useful flags for TOA generation. Generates polycos (if required) based on the par file specified as the argument. (This means you don't need the -par or -psr commands!)\n");
+  fprintf(stderr,"                  1 char* value\n");
+  fprintf(stderr,"        -rzwcand: The candidate number to fold from 'infile'_rzw.cand\n");
+  fprintf(stderr,"                  1 int value between 1 and oo\n");
+  fprintf(stderr,"        -rzwfile: Name of the rzw search '.cand' file to use (with suffix)\n");
+  fprintf(stderr,"                  1 char* value\n");
+  fprintf(stderr,"      -accelcand: The candidate number to fold from 'infile'_rzw.cand\n");
+  fprintf(stderr,"                  1 int value between 1 and oo\n");
+  fprintf(stderr,"      -accelfile: Name of the accel search '.cand' file to use (with suffix)\n");
+  fprintf(stderr,"                  1 char* value\n");
+  fprintf(stderr,"            -bin: Fold a binary pulsar.  Must include all of the following parameters\n");
+  fprintf(stderr,"             -pb: The orbital period (s)\n");
+  fprintf(stderr,"                  1 double value between 0 and oo\n");
+  fprintf(stderr,"              -x: The projected orbital semi-major axis (lt-sec)\n");
+  fprintf(stderr,"                  1 double value between 0 and oo\n");
+  fprintf(stderr,"              -e: The orbital eccentricity\n");
+  fprintf(stderr,"                  1 double value between 0 and 0.9999999\n");
+  fprintf(stderr,"                  default: `0'\n");
+  fprintf(stderr,"             -To: The time of periastron passage (MJD)\n");
+  fprintf(stderr,"                  1 double value between 0 and oo\n");
+  fprintf(stderr,"              -w: Longitude of periastron (deg)\n");
+  fprintf(stderr,"                  1 double value between 0 and 360\n");
+  fprintf(stderr,"           -wdot: Rate of advance of periastron (deg/yr)\n");
+  fprintf(stderr,"                  1 double value\n");
+  fprintf(stderr,"                  default: `0'\n");
+  fprintf(stderr,"           -mask: File containing masking information to use\n");
+  fprintf(stderr,"                  1 char* value\n");
+  fprintf(stderr,"         -events: Use a event file instead of a time series (.dat) file\n");
+  fprintf(stderr,"           -days: Events are in days since the EPOCH in the '.inf' file (default is seconds)\n");
+  fprintf(stderr,"           -mjds: Events are in MJDs\n");
+  fprintf(stderr,"         -double: Events are in binary double precision (default is ASCII)\n");
+  fprintf(stderr,"         -offset: A time offset to add to the 1st event in the same units as the events\n");
+  fprintf(stderr,"                  1 double value\n");
+  fprintf(stderr,"                  default: `0'\n");
+  fprintf(stderr,"          infile: Input data file name.  If the data is not in a regognized raw data format, it should be a file containing a time series of single-precision floats or short ints.  In this case a '.inf' file with the same root filename must also exist (Note that this means that the input data file must have a suffix that starts with a period)\n");
+  fprintf(stderr,"                  1...16384 values\n");
+  fprintf(stderr,"  version: 22Jun15\n");
+  fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
 /**********************************************************************/
@@ -1938,12 +1926,10 @@ parseCmdline(int argc, char **argv)
       continue;
     }
 
-#ifdef USELOFAR
     if( 0==strcmp("-lofarhdf5", argv[i]) ) {
       cmd.lofarhdf5P = 1;
       continue;
     }
-#endif
 
     if( 0==strcmp("-psrfits", argv[i]) ) {
       cmd.psrfitsP = 1;
@@ -2137,7 +2123,7 @@ parseCmdline(int argc, char **argv)
       cmd.nsubP = 1;
       i = getIntOpt(argc, argv, i, &cmd.nsub, 1);
       cmd.nsubC = i-keep;
-      checkIntLower("-nsub", &cmd.nsub, cmd.nsubC, 4096);
+      checkIntLower("-nsub", &cmd.nsub, cmd.nsubC, 8192);
       checkIntHigher("-nsub", &cmd.nsub, cmd.nsubC, 1);
       continue;
     }
@@ -2147,7 +2133,7 @@ parseCmdline(int argc, char **argv)
       cmd.npartP = 1;
       i = getIntOpt(argc, argv, i, &cmd.npart, 1);
       cmd.npartC = i-keep;
-      checkIntLower("-npart", &cmd.npart, cmd.npartC, 4096);
+      checkIntLower("-npart", &cmd.npart, cmd.npartC, 8192);
       checkIntHigher("-npart", &cmd.npart, cmd.npartC, 1);
       continue;
     }

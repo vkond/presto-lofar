@@ -828,24 +828,24 @@ showOptionValues(void)
 void
 usage(void)
 {
-  fprintf(stderr,"%s","   [-n numvect] [-r rr] [-p pp] [-f ff] [-norm norm] [-fftnorm] [--] infile\n");
-  fprintf(stderr,"%s","      Calculates the complex vector addition of a DFT frequency.\n");
-  fprintf(stderr,"%s","          -n: The number of DFT sub-vectors to save\n");
-  fprintf(stderr,"%s","              1 int value between 2 and 262144\n");
-  fprintf(stderr,"%s","              default: `1000'\n");
-  fprintf(stderr,"%s","          -r: The Fourier frequency to fold (bins)\n");
-  fprintf(stderr,"%s","              1 double value between 1.0 and 2000000000.0\n");
-  fprintf(stderr,"%s","          -p: The period to fold (s)\n");
-  fprintf(stderr,"%s","              1 double value between 0.00000001 and 100000.0\n");
-  fprintf(stderr,"%s","          -f: The frequency to fold (Hz)\n");
-  fprintf(stderr,"%s","              1 double value between 0.00000001 and 100000.0\n");
-  fprintf(stderr,"%s","       -norm: Raw power divided by this normalizes the power\n");
-  fprintf(stderr,"%s","              1 double value\n");
-  fprintf(stderr,"%s","    -fftnorm: Use local powers from '.fft' file to get 'norm'\n");
-  fprintf(stderr,"%s","      infile: Input data file name (without a suffix) of floating point data.  A '.inf' file of the same name must also exist\n");
-  fprintf(stderr,"%s","              1 value\n");
-  fprintf(stderr,"%s","  version: 12Mar10\n");
-  fprintf(stderr,"%s","  ");
+  fprintf(stderr,"   [-n numvect] [-r rr] [-p pp] [-f ff] [-norm norm] [-fftnorm] [--] infile\n");
+  fprintf(stderr,"      Calculates the complex vector addition of a DFT frequency.\n");
+  fprintf(stderr,"          -n: The number of DFT sub-vectors to save\n");
+  fprintf(stderr,"              1 int value between 2 and 262144\n");
+  fprintf(stderr,"              default: `1000'\n");
+  fprintf(stderr,"          -r: The Fourier frequency to fold (bins)\n");
+  fprintf(stderr,"              1 double value between 1.0 and 2000000000.0\n");
+  fprintf(stderr,"          -p: The period to fold (s)\n");
+  fprintf(stderr,"              1 double value between 0.00000001 and 100000.0\n");
+  fprintf(stderr,"          -f: The frequency to fold (Hz)\n");
+  fprintf(stderr,"              1 double value between 0.00000001 and 100000.0\n");
+  fprintf(stderr,"       -norm: Raw power divided by this normalizes the power\n");
+  fprintf(stderr,"              1 double value\n");
+  fprintf(stderr,"    -fftnorm: Use local powers from '.fft' file to get 'norm'\n");
+  fprintf(stderr,"      infile: Input data file name (without a suffix) of floating point data.  A '.inf' file of the same name must also exist\n");
+  fprintf(stderr,"              1 value\n");
+  fprintf(stderr,"  version: 22Jun15\n");
+  fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
 /**********************************************************************/

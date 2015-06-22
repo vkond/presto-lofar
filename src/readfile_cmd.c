@@ -79,10 +79,8 @@ static Cmdline cmd = {
   /* spigotP = */ 0,
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   /* filterbankP = */ 0,
-#ifdef USELOFAR
   /***** -lofarhdf5: Raw data in LOFARHDF5 format */
   /* lofarhdf5P = */ 0,
-#endif
   /***** -psrfits: Raw data in PSRFITS format */
   /* psrfitsP = */ 0,
   /***** -fortran: Raw data was written by a fortran program */
@@ -994,16 +992,12 @@ showOptionValues(void)
     printf("-filterbank found:\n");
   }
 
-#ifdef USELOFAR
-
   /***** -lofarhdf5: Raw data in LOFARHDF5 format */
   if( !cmd.lofarhdf5P ) {
     printf("-lofarhdf5 not found.\n");
   } else {
     printf("-lofarhdf5 found:\n");
   }
-
-#endif
 
   /***** -psrfits: Raw data in PSRFITS format */
   if( !cmd.psrfitsP ) {
@@ -1061,55 +1055,49 @@ showOptionValues(void)
 void
 usage(void)
 {
-#ifdef USELOFAR
-  fprintf(stderr,"%s","   [-page] [-byte] [-b] [-float] [-f] [-double] [-d] [-fcomplex] [-fc] [-dcomplex] [-dc] [-short] [-s] [-int] [-i] [-long] [-l] [-rzwcand] [-rzw] [-bincand] [-bin] [-position] [-pos] [-pkmb] [-bcpm] [-wapp] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-fortran] [-index [index]] [-nph nph] [--] file\n");
-#else
-  fprintf(stderr,"%s","   [-page] [-byte] [-b] [-float] [-f] [-double] [-d] [-fcomplex] [-fc] [-dcomplex] [-dc] [-short] [-s] [-int] [-i] [-long] [-l] [-rzwcand] [-rzw] [-bincand] [-bin] [-position] [-pos] [-pkmb] [-bcpm] [-wapp] [-spigot] [-filterbank] [-psrfits] [-fortran] [-index [index]] [-nph nph] [--] file\n");
-#endif
-  fprintf(stderr,"%s","      Reads raw data from a binary file and displays it on stdout.\n");
-  fprintf(stderr,"%s","          -page: Paginate the output like 'more'\n");
-  fprintf(stderr,"%s","          -byte: Raw data in byte format\n");
-  fprintf(stderr,"%s","             -b: Raw data in byte format\n");
-  fprintf(stderr,"%s","         -float: Raw data in floating point format\n");
-  fprintf(stderr,"%s","             -f: Raw data in floating point format\n");
-  fprintf(stderr,"%s","        -double: Raw data in double precision format\n");
-  fprintf(stderr,"%s","             -d: Raw data in double precision format\n");
-  fprintf(stderr,"%s","      -fcomplex: Raw data in float-complex format\n");
-  fprintf(stderr,"%s","            -fc: Raw data in float-complex format\n");
-  fprintf(stderr,"%s","      -dcomplex: Raw data in double-complex format\n");
-  fprintf(stderr,"%s","            -dc: Raw data in double-complex format\n");
-  fprintf(stderr,"%s","         -short: Raw data in short format\n");
-  fprintf(stderr,"%s","             -s: Raw data in short format\n");
-  fprintf(stderr,"%s","           -int: Raw data in integer format\n");
-  fprintf(stderr,"%s","             -i: Raw data in integer format\n");
-  fprintf(stderr,"%s","          -long: Raw data in long format\n");
-  fprintf(stderr,"%s","             -l: Raw data in long format\n");
-  fprintf(stderr,"%s","       -rzwcand: Raw data in rzw search candidate format\n");
-  fprintf(stderr,"%s","           -rzw: Raw data in rzw search candidate format\n");
-  fprintf(stderr,"%s","       -bincand: Raw data in bin search candidate format\n");
-  fprintf(stderr,"%s","           -bin: Raw data in bin search candidate format\n");
-  fprintf(stderr,"%s","      -position: Raw data in position struct format\n");
-  fprintf(stderr,"%s","           -pos: Raw data in position struct format\n");
-  fprintf(stderr,"%s","          -pkmb: Raw data in Parkes Multibeam format\n");
-  fprintf(stderr,"%s","          -bcpm: Raw data in BCPM format\n");
-  fprintf(stderr,"%s","          -wapp: Raw data in WAPP format\n");
-  fprintf(stderr,"%s","        -spigot: Raw data in Spigot Card format\n");
-  fprintf(stderr,"%s","    -filterbank: Raw data in SIGPROC filterbank format\n");
-#ifdef USELOFAR
-  fprintf(stderr,"%s","     -lofarhdf5: Raw data in LOFARHDF5 format\n");
-#endif
-  fprintf(stderr,"%s","       -psrfits: Raw data in PSRFITS format\n");
-  fprintf(stderr,"%s","       -fortran: Raw data was written by a fortran program\n");
-  fprintf(stderr,"%s","         -index: The range of objects to display\n");
-  fprintf(stderr,"%s","                 0...2 int values between -1 and oo\n");
-  fprintf(stderr,"%s","                 default: `0' ` -1'\n");
-  fprintf(stderr,"%s","           -nph: 0th FFT bin amplitude (for 'RZW' data)\n");
-  fprintf(stderr,"%s","                 1 double value\n");
-  fprintf(stderr,"%s","                 default: `1.0'\n");
-  fprintf(stderr,"%s","           file: Input data file name.\n");
-  fprintf(stderr,"%s","                 1 value\n");
-  fprintf(stderr,"%s","  version: 12Mar10\n");
-  fprintf(stderr,"%s","  ");
+  fprintf(stderr,"   [-page] [-byte] [-b] [-float] [-f] [-double] [-d] [-fcomplex] [-fc] [-dcomplex] [-dc] [-short] [-s] [-int] [-i] [-long] [-l] [-rzwcand] [-rzw] [-bincand] [-bin] [-position] [-pos] [-pkmb] [-bcpm] [-wapp] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-fortran] [-index [index]] [-nph nph] [--] file\n");
+  fprintf(stderr,"      Reads raw data from a binary file and displays it on stdout.\n");
+  fprintf(stderr,"          -page: Paginate the output like 'more'\n");
+  fprintf(stderr,"          -byte: Raw data in byte format\n");
+  fprintf(stderr,"             -b: Raw data in byte format\n");
+  fprintf(stderr,"         -float: Raw data in floating point format\n");
+  fprintf(stderr,"             -f: Raw data in floating point format\n");
+  fprintf(stderr,"        -double: Raw data in double precision format\n");
+  fprintf(stderr,"             -d: Raw data in double precision format\n");
+  fprintf(stderr,"      -fcomplex: Raw data in float-complex format\n");
+  fprintf(stderr,"            -fc: Raw data in float-complex format\n");
+  fprintf(stderr,"      -dcomplex: Raw data in double-complex format\n");
+  fprintf(stderr,"            -dc: Raw data in double-complex format\n");
+  fprintf(stderr,"         -short: Raw data in short format\n");
+  fprintf(stderr,"             -s: Raw data in short format\n");
+  fprintf(stderr,"           -int: Raw data in integer format\n");
+  fprintf(stderr,"             -i: Raw data in integer format\n");
+  fprintf(stderr,"          -long: Raw data in long format\n");
+  fprintf(stderr,"             -l: Raw data in long format\n");
+  fprintf(stderr,"       -rzwcand: Raw data in rzw search candidate format\n");
+  fprintf(stderr,"           -rzw: Raw data in rzw search candidate format\n");
+  fprintf(stderr,"       -bincand: Raw data in bin search candidate format\n");
+  fprintf(stderr,"           -bin: Raw data in bin search candidate format\n");
+  fprintf(stderr,"      -position: Raw data in position struct format\n");
+  fprintf(stderr,"           -pos: Raw data in position struct format\n");
+  fprintf(stderr,"          -pkmb: Raw data in Parkes Multibeam format\n");
+  fprintf(stderr,"          -bcpm: Raw data in BCPM format\n");
+  fprintf(stderr,"          -wapp: Raw data in WAPP format\n");
+  fprintf(stderr,"        -spigot: Raw data in Spigot Card format\n");
+  fprintf(stderr,"    -filterbank: Raw data in SIGPROC filterbank format\n");
+  fprintf(stderr,"     -lofarhdf5: Raw data in LOFARHDF5 format\n");
+  fprintf(stderr,"       -psrfits: Raw data in PSRFITS format\n");
+  fprintf(stderr,"       -fortran: Raw data was written by a fortran program\n");
+  fprintf(stderr,"         -index: The range of objects to display\n");
+  fprintf(stderr,"                 0...2 int values between -1 and oo\n");
+  fprintf(stderr,"                 default: `0' ` -1'\n");
+  fprintf(stderr,"           -nph: 0th FFT bin amplitude (for 'RZW' data)\n");
+  fprintf(stderr,"                 1 double value\n");
+  fprintf(stderr,"                 default: `1.0'\n");
+  fprintf(stderr,"           file: Input data file name.\n");
+  fprintf(stderr,"                 1 value\n");
+  fprintf(stderr,"  version: 22Jun15\n");
+  fprintf(stderr,"  ");
   exit(EXIT_FAILURE);
 }
 /**********************************************************************/
@@ -1266,12 +1254,10 @@ parseCmdline(int argc, char **argv)
       continue;
     }
 
-#ifdef USELOFAR
     if( 0==strcmp("-lofarhdf5", argv[i]) ) {
       cmd.lofarhdf5P = 1;
       continue;
     }
-#endif
 
     if( 0==strcmp("-psrfits", argv[i]) ) {
       cmd.psrfitsP = 1;
