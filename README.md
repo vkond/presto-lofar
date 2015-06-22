@@ -15,6 +15,7 @@ PRESTO stands for: **PulsaR Exploration and Search TOolkit**!
 more than 150 recycled pulsars, most of which are in binaries!**
 
 ## New in Version 2:
+ * Added support for LOFAR HDF5 raw data
  * WAPP, BCPM, Spigot, and 1-bit analog filterbank data are deprecated! 
    (see below)
  * Dramatically improved internal handling (giving better dynamic
@@ -30,6 +31,8 @@ PRESTO is written with portability, ease-of-use, and memory efficiency
 in mind, it can currently handle raw data from the following pulsar
 machines or formats:
 
+ * LOFAR HDF5 raw data format (single beam, Stokes I, all subbands
+   within one file)
  * PSRFITS search-format data (as from GUPPI at the GBT, PUPPI and
    the Mock Spectrometers at Arecibo, and much new and archived data
    from Parkes)
