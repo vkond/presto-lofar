@@ -6,8 +6,13 @@
 #include "backend_common.h"
 #include "rfifind.h"
 
+#ifdef USELOFAR
 #define RAWDATA (cmd->pkmbP || cmd->bcpmP || cmd->wappP || \
-                 cmd->spigotP || cmd->filterbankP || cmd->psrfitsP)
+                         cmd->spigotP || cmd->filterbankP || cmd->psrfitsP || cmd->lofarhdf5P)
+#else
+#define RAWDATA (cmd->pkmbP || cmd->bcpmP || cmd->wappP || \
+                         cmd->spigotP || cmd->filterbankP || cmd->psrfitsP)
+#endif
 
 /* Some function definitions */
 
@@ -139,6 +144,9 @@ int main(int argc, char *argv[])
    if (RAWDATA) {
        if (cmd->filterbankP) s.datatype = SIGPROCFB;
        else if (cmd->psrfitsP) s.datatype = PSRFITS;
+#ifdef USELOFAR
+       else if (cmd->lofarhdf5P) s.datatype = LOFARHDF5;
+#endif
        else if (cmd->pkmbP) s.datatype = SCAMP;
        else if (cmd->bcpmP) s.datatype = BPP;
        else if (cmd->wappP) s.datatype = WAPP;
@@ -147,6 +155,9 @@ int main(int argc, char *argv[])
        identify_psrdatatype(&s, 1);
        if (s.datatype==SIGPROCFB) cmd->filterbankP = 1;
        else if (s.datatype==PSRFITS) cmd->psrfitsP = 1;
+#ifdef USELOFAR
+       else if (s.datatype==LOFARHDF5) cmd->lofarhdf5P = 1;
+#endif
        else if (s.datatype==SCAMP) cmd->pkmbP = 1;
        else if (s.datatype==BPP) cmd->bcpmP = 1;
        else if (s.datatype==WAPP) cmd->wappP = 1;

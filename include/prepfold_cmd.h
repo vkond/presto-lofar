@@ -9,10 +9,6 @@
 *****/
 
 typedef struct s_Cmdline {
-  /***** -ncpus: Number of processors to use with OpenMP */
-  char ncpusP;
-  int ncpus;
-  int ncpusC;
   /***** -o: Root of the output file names */
   char outfileP;
   char* outfile;
@@ -27,6 +23,10 @@ typedef struct s_Cmdline {
   char spigotP;
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   char filterbankP;
+#ifdef USELOFAR
+  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
+  char lofarhdf5P;
+#endif
   /***** -psrfits: Raw data in PSRFITS format */
   char psrfitsP;
   /***** -noweights: Do not apply PSRFITS weights */
@@ -63,6 +63,8 @@ typedef struct s_Cmdline {
   int clipC;
   /***** -noclip: Do not clip the data.  (The default is to _always_ clip!) */
   char noclipP;
+  /***** -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default) */
+  char de405P;
   /***** -noxwin: Do not show the result plots on-screen, only make postscript files */
   char noxwinP;
   /***** -runavg: Subtract each blocks average as it is read (single channel data only) */
@@ -101,7 +103,7 @@ typedef struct s_Cmdline {
   char proflenP;
   int proflen;
   int proflenC;
-  /***** -nsub: The number of sub-bands to use for the DM search.  If unspecified, will use something reasonable. */
+  /***** -nsub: The number of sub-bands to use for the DM search */
   char nsubP;
   int nsub;
   int nsubC;

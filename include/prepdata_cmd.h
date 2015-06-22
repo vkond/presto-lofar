@@ -9,10 +9,6 @@
 *****/
 
 typedef struct s_Cmdline {
-  /***** -ncpus: Number of processors to use with OpenMP */
-  char ncpusP;
-  int ncpus;
-  int ncpusC;
   /***** -o: Root of the output file names */
   char outfileP;
   char* outfile;
@@ -27,6 +23,10 @@ typedef struct s_Cmdline {
   char spigotP;
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   char filterbankP;
+#ifdef USELOFAR
+  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
+  char lofarhdf5P;
+#endif
   /***** -psrfits: Raw data in PSRFITS format */
   char psrfitsP;
   /***** -noweights: Do not apply PSRFITS weights */
@@ -59,7 +59,7 @@ typedef struct s_Cmdline {
   char zerodmP;
   /***** -numout: Output this many values.  If there are not enough values in the original data file, will pad the output file with the average value */
   char numoutP;
-  long numout;
+  int numout;
   int numoutC;
   /***** -downsamp: The number of neighboring bins to co-add */
   char downsampP;
@@ -69,6 +69,8 @@ typedef struct s_Cmdline {
   char nobaryP;
   /***** -shorts: Use short ints for the output data instead of floats */
   char shortsP;
+  /***** -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default) */
+  char de405P;
   /***** -dm: The dispersion measure to de-disperse (cm^-3 pc) */
   char dmP;
   double dm;

@@ -13,10 +13,15 @@
 
 /* Round a double or float to the nearest integer. */
 /* x.5s get rounded away from zero.                */
-#define NEAREST_LONG(x) (long) (x < 0 ? ceil(x - 0.5) : floor(x + 0.5))
+#define NEAREST_INT(x) (int) (x < 0 ? ceil(x - 0.5) : floor(x + 0.5))
 
+#ifdef USELOFAR
+#define RAWDATA (cmd->pkmbP || cmd->bcpmP || cmd->wappP || \
+                 cmd->spigotP || cmd->filterbankP || cmd->psrfitsP || cmd->lofarhdf5P)
+#else
 #define RAWDATA (cmd->pkmbP || cmd->bcpmP || cmd->wappP || \
                  cmd->spigotP || cmd->filterbankP || cmd->psrfitsP)
+#endif
 
 /* Some function definitions */
 static int read_floats(FILE * file, float *data, int numpts, int numchan);
@@ -99,6 +104,9 @@ int main(int argc, char *argv[])
    if (RAWDATA) {
        if (cmd->filterbankP) s.datatype = SIGPROCFB;
        else if (cmd->psrfitsP) s.datatype = PSRFITS;
+#ifdef USELOFAR
+       else if (cmd->lofarhdf5P) s.datatype = LOFARHDF5;
+#endif
        else if (cmd->pkmbP) s.datatype = SCAMP;
        else if (cmd->bcpmP) s.datatype = BPP;
        else if (cmd->wappP) s.datatype = WAPP;
@@ -107,6 +115,9 @@ int main(int argc, char *argv[])
        identify_psrdatatype(&s, 1);
        if (s.datatype==SIGPROCFB) cmd->filterbankP = 1;
        else if (s.datatype==PSRFITS) cmd->psrfitsP = 1;
+#ifdef USELOFAR
+       else if (s.datatype==LOFARHDF5) cmd->lofarhdf5P = 1;
+#endif
        else if (s.datatype==SCAMP) cmd->pkmbP = 1;
        else if (s.datatype==BPP) cmd->bcpmP = 1;
        else if (s.datatype==WAPP) cmd->wappP = 1;
@@ -172,7 +183,7 @@ int main(int argc, char *argv[])
            writeinf(&idata);
            idata.N = dtmp;
        } else {
-           cmd->numout = LONG_MAX;
+           cmd->numout = INT_MAX;
            writeinf(&idata);
        }
        /* The number of topo to bary time points to generate with TEMPO */
@@ -221,7 +232,7 @@ int main(int argc, char *argv[])
 
       /* Compare the size of the data to the size of output we request */
       if (!cmd->numoutP)
-         cmd->numout = LONG_MAX;
+         cmd->numout = INT_MAX;
    }
    
    /* Check if we are downsampling */
@@ -351,8 +362,11 @@ int main(int argc, char *argv[])
       double avgvoverc = 0.0, maxvoverc = -1.0, minvoverc = 1.0, *voverc = NULL;
       double *bobsf = NULL, *btoa = NULL, *ttoa = NULL;
 
-      /* What ephemeris will we use?  (Default is DE405) */
-      strcpy(ephem, "DE405");
+      /* What ephemeris will we use?  (Default is DE200) */
+      if (cmd->de405P)
+         strcpy(ephem, "DE405");
+      else
+         strcpy(ephem, "DE200");
 
       /* Define the RA and DEC of the observation */
       ra_dec_to_string(rastring, idata.ra_h, idata.ra_m, idata.ra_s);
@@ -425,11 +439,11 @@ int main(int argc, char *argv[])
          int oldbin = 0, currentbin;
          double lobin, hibin, calcpt;
 
-         numdiffbins = abs(NEAREST_LONG(btoa[numbarypts - 1])) + 1;
+         numdiffbins = abs(NEAREST_INT(btoa[numbarypts - 1])) + 1;
          diffbins = gen_ivect(numdiffbins);
          diffbinptr = diffbins;
          for (ii = 1; ii < numbarypts; ii++) {
-            currentbin = NEAREST_LONG(btoa[ii]);
+            currentbin = NEAREST_INT(btoa[ii]);
             if (currentbin != oldbin) {
                if (currentbin > 0) {
                   calcpt = oldbin + 0.5;
@@ -443,7 +457,7 @@ int main(int argc, char *argv[])
                while (fabs(calcpt) < fabs(btoa[ii])) {
                   /* Negative bin number means remove that bin */
                   /* Positive bin number means add a bin there */
-                  *diffbinptr = NEAREST_LONG(LININTERP(calcpt, btoa[ii - 1],
+                  *diffbinptr = NEAREST_INT(LININTERP(calcpt, btoa[ii - 1],
                                                       btoa[ii], lobin, hibin));
                   diffbinptr++;
                   calcpt = (currentbin > 0) ? calcpt + 1.0 : calcpt - 1.0;

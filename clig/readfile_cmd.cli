@@ -38,6 +38,7 @@ Flag   	-bcpm    	bcpm	{Raw data in BCPM format}
 Flag    -wapp           wapp    {Raw data in WAPP format}
 Flag    -spigot         spigot  {Raw data in Spigot Card format}
 Flag    -filterbank     filterbank  {Raw data in SIGPROC filterbank format}
+Flag    -lofarhdf5     lofarhdf5  {Raw data in LOFARHDF5 format}
 Flag    -psrfits     psrfits  {Raw data in PSRFITS format}
 Flag	-fortran        fortran {Raw data was written by a fortran program}
 Int 	-index 		index 	{The range of objects to display} \

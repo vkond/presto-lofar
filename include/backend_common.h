@@ -2,10 +2,9 @@
 #include "mask.h"
 #include "makeinf.h"
 
-
 typedef enum {
     SIGPROCFB, PSRFITS, SCAMP, BPP, WAPP, SPIGOT, \
-    SUBBAND, DAT, SDAT, EVENTS, UNSET
+    SUBBAND, DAT, SDAT, EVENTS, LOFARHDF5, UNSET
 } psrdatatype;
 
 
@@ -73,6 +72,9 @@ struct spectra_info {
     char **filenames;       // Array of the input file names
     FILE **files;           // Array of normal file pointers if needed
     fitsfile **fitsfiles;   // Array of FITS file pointers if needed
+#ifdef USELOFAR
+    long long **h5files;    // Array of LOFAR HDF5 file pointers if needed (addresses to h5file)
+#endif
     float *padvals;         // Array of length num_channels for current padding values
     int *header_offset;     // Number of bytes to skip in each file to get to spectra
     int *start_subint;      // Starting ISUBINT in each file (for PSRFITS)
@@ -100,7 +102,33 @@ int read_psrdata(float *fdata, int numspect, struct spectra_info *s, int *delays
 void get_channel(float chandat[], int channum, int numsubints, float rawdata[], struct spectra_info *s);
 int prep_subbands(float *fdata, float *rawdata, int *delays, int numsubbands, struct spectra_info *s, int transpose, int *maskchans, int *nummasked, mask *obsmask);
 int read_subbands(float *fdata, int *delays, int numsubbands, struct spectra_info *s, int transpose, int *padding, int *maskchans, int *nummasked, mask *obsmask);
-void flip_band(float *fdata, struct spectra_info *s);
 
+#ifndef USELOFAR
+void flip_band(float *fdata, struct spectra_info *s);
 /* zerodm.c */
 void remove_zerodm(float *fdata, struct spectra_info *s);
+#else
+#ifdef __cplusplus
+extern "C" {
+#endif
+void flip_band(float *fdata, struct spectra_info *s);
+/* zerodm.c */
+void remove_zerodm(float *fdata, struct spectra_info *s);
+#ifdef __cplusplus
+}
+#endif
+#endif
+
+/* lofarhdf5.cxx */
+#ifdef USELOFAR
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+void read_LOFARHDF5_files(struct spectra_info *s);
+void close_LOFARHDF5_file(long long *ptr);
+#ifdef __cplusplus
+}
+#endif
+
+#endif

@@ -11,7 +11,7 @@
 .\" it edited by clig, remove the respective pair of cligPart-lines.
 .\"
 .\" cligPart TITLE
-.TH "prepfold" 1 "21Apr15" "Clig-manuals" "Programmer's Manual"
+.TH "prepfold" 1 "09Aug14" "Clig-manuals" "Programmer's Manual"
 .\" cligPart TITLE end
 
 .\" cligPart NAME
@@ -22,7 +22,6 @@ prepfold \- Prepares (if required) and folds raw radio data, standard time serie
 .\" cligPart SYNOPSIS
 .SH SYNOPSIS
 .B prepfold
-[-ncpus ncpus]
 [-o outfile]
 [-pkmb]
 [-gmrt]
@@ -44,6 +43,7 @@ prepfold \- Prepares (if required) and folds raw radio data, standard time serie
 [-if ifs]
 [-clip clip]
 [-noclip]
+[-DE405]
 [-noxwin]
 [-runavg]
 [-fine]
@@ -105,12 +105,6 @@ infile ...
 
 .\" cligPart OPTIONS
 .SH OPTIONS
-.IP -ncpus
-Number of processors to use with OpenMP,
-.br
-1 Int value between 1 and oo.
-.br
-Default: `1'
 .IP -o
 Root of the output file names,
 .br
@@ -165,6 +159,8 @@ Time-domain sigma to use for clipping (0.0 = no clipping, 6.0 = default,
 Default: `6.0'
 .IP -noclip
 Do not clip the data.  (The default is to _always_ clip!).
+.IP -DE405
+Use the DE405 ephemeris for barycentering instead of DE200 (the default).
 .IP -noxwin
 Do not show the result plots on-screen, only make postscript files.
 .IP -runavg
@@ -206,9 +202,11 @@ The number of bins in the profile.  Defaults to the number of sampling bins whic
 .br
 1 Int value.
 .IP -nsub
-The number of sub-bands to use for the DM search.  If unspecified, will use something reasonable.,
+The number of sub-bands to use for the DM search,
 .br
 1 Int value between 1 and 4096.
+.br
+Default: `32'
 .IP -npart
 The number of sub-integrations to use for the period search,
 .br

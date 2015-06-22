@@ -22,10 +22,6 @@ char *Program;
 /*@-null*/
 
 static Cmdline cmd = {
-  /***** -ncpus: Number of processors to use with OpenMP */
-  /* ncpusP = */ 1,
-  /* ncpus = */ 1,
-  /* ncpusC = */ 1,
   /***** -o: Root of the output file names */
   /* outfileP = */ 0,
   /* outfile = */ (char*)0,
@@ -40,6 +36,10 @@ static Cmdline cmd = {
   /* spigotP = */ 0,
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   /* filterbankP = */ 0,
+#ifdef USELOFAR
+  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
+  /* lofarhdf5P = */ 0,
+#endif
   /***** -psrfits: Raw data in PSRFITS format */
   /* psrfitsP = */ 0,
   /***** -noweights: Do not apply PSRFITS weights */
@@ -76,6 +76,8 @@ static Cmdline cmd = {
   /* clipC = */ 1,
   /***** -noclip: Do not clip the data.  (The default is to _always_ clip!) */
   /* noclipP = */ 0,
+  /***** -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default) */
+  /* de405P = */ 0,
   /***** -noxwin: Do not show the result plots on-screen, only make postscript files */
   /* noxwinP = */ 0,
   /***** -runavg: Subtract each blocks average as it is read (single channel data only) */
@@ -114,10 +116,10 @@ static Cmdline cmd = {
   /* proflenP = */ 0,
   /* proflen = */ (int)0,
   /* proflenC = */ 0,
-  /***** -nsub: The number of sub-bands to use for the DM search.  If unspecified, will use something reasonable. */
-  /* nsubP = */ 0,
-  /* nsub = */ (int)0,
-  /* nsubC = */ 0,
+  /***** -nsub: The number of sub-bands to use for the DM search */
+  /* nsubP = */ 1,
+  /* nsub = */ 32,
+  /* nsubC = */ 1,
   /***** -npart: The number of sub-integrations to use for the period search */
   /* npartP = */ 1,
   /* npart = */ 64,
@@ -963,18 +965,6 @@ showOptionValues(void)
 
   printf("Full command line is:\n`%s'\n", cmd.full_cmd_line);
 
-  /***** -ncpus: Number of processors to use with OpenMP */
-  if( !cmd.ncpusP ) {
-    printf("-ncpus not found.\n");
-  } else {
-    printf("-ncpus found:\n");
-    if( !cmd.ncpusC ) {
-      printf("  no values\n");
-    } else {
-      printf("  value = `%d'\n", cmd.ncpus);
-    }
-  }
-
   /***** -o: Root of the output file names */
   if( !cmd.outfileP ) {
     printf("-o not found.\n");
@@ -1021,6 +1011,17 @@ showOptionValues(void)
   } else {
     printf("-filterbank found:\n");
   }
+
+#ifdef USELOFAR
+
+  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
+  if( !cmd.lofarhdf5P ) {
+    printf("-lofarhdf5 not found.\n");
+  } else {
+    printf("-lofarhdf5 found:\n");
+  }
+
+#endif
 
   /***** -psrfits: Raw data in PSRFITS format */
   if( !cmd.psrfitsP ) {
@@ -1140,6 +1141,13 @@ showOptionValues(void)
     printf("-noclip not found.\n");
   } else {
     printf("-noclip found:\n");
+  }
+
+  /***** -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default) */
+  if( !cmd.de405P ) {
+    printf("-DE405 not found.\n");
+  } else {
+    printf("-DE405 found:\n");
   }
 
   /***** -noxwin: Do not show the result plots on-screen, only make postscript files */
@@ -1271,7 +1279,7 @@ showOptionValues(void)
     }
   }
 
-  /***** -nsub: The number of sub-bands to use for the DM search.  If unspecified, will use something reasonable. */
+  /***** -nsub: The number of sub-bands to use for the DM search */
   if( !cmd.nsubP ) {
     printf("-nsub not found.\n");
   } else {
@@ -1728,11 +1736,12 @@ showOptionValues(void)
 void
 usage(void)
 {
-  fprintf(stderr,"%s","   [-ncpus ncpus] [-o outfile] [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-topo] [-invert] [-zerodm] [-absphase] [-barypolycos] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-noxwin] [-runavg] [-fine] [-coarse] [-slow] [-searchpdd] [-searchfdd] [-nosearch] [-nopsearch] [-nopdsearch] [-nodmsearch] [-scaleparts] [-allgrey] [-fixchi] [-justprofs] [-dm dm] [-n proflen] [-nsub nsub] [-npart npart] [-pstep pstep] [-pdstep pdstep] [-dmstep dmstep] [-npfact npfact] [-ndmfact ndmfact] [-p p] [-pd pd] [-pdd pdd] [-f f] [-fd fd] [-fdd fdd] [-pfact pfact] [-ffact ffact] [-phs phs] [-start startT] [-end endT] [-psr psrname] [-par parname] [-polycos polycofile] [-timing timing] [-rzwcand rzwcand] [-rzwfile rzwfile] [-accelcand accelcand] [-accelfile accelfile] [-bin] [-pb pb] [-x asinic] [-e e] [-To To] [-w w] [-wdot wdot] [-mask maskfile] [-events] [-days] [-mjds] [-double] [-offset offset] [--] infile ...\n");
+#ifdef USELOFAR
+  fprintf(stderr,"%s","   [-o outfile] [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-topo] [-invert] [-zerodm] [-absphase] [-barypolycos] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-DE405] [-noxwin] [-runavg] [-fine] [-coarse] [-slow] [-searchpdd] [-searchfdd] [-nosearch] [-nopsearch] [-nopdsearch] [-nodmsearch] [-scaleparts] [-allgrey] [-fixchi] [-justprofs] [-dm dm] [-n proflen] [-nsub nsub] [-npart npart] [-pstep pstep] [-pdstep pdstep] [-dmstep dmstep] [-npfact npfact] [-ndmfact ndmfact] [-p p] [-pd pd] [-pdd pdd] [-f f] [-fd fd] [-fdd fdd] [-pfact pfact] [-ffact ffact] [-phs phs] [-start startT] [-end endT] [-psr psrname] [-par parname] [-polycos polycofile] [-timing timing] [-rzwcand rzwcand] [-rzwfile rzwfile] [-accelcand accelcand] [-accelfile accelfile] [-bin] [-pb pb] [-x asinic] [-e e] [-To To] [-w w] [-wdot wdot] [-mask maskfile] [-events] [-days] [-mjds] [-double] [-offset offset] [--] infile ...\n");
+#else
+  fprintf(stderr,"%s","   [-o outfile] [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-topo] [-invert] [-zerodm] [-absphase] [-barypolycos] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-DE405] [-noxwin] [-runavg] [-fine] [-coarse] [-slow] [-searchpdd] [-searchfdd] [-nosearch] [-nopsearch] [-nopdsearch] [-nodmsearch] [-scaleparts] [-allgrey] [-fixchi] [-justprofs] [-dm dm] [-n proflen] [-nsub nsub] [-npart npart] [-pstep pstep] [-pdstep pdstep] [-dmstep dmstep] [-npfact npfact] [-ndmfact ndmfact] [-p p] [-pd pd] [-pdd pdd] [-f f] [-fd fd] [-fdd fdd] [-pfact pfact] [-ffact ffact] [-phs phs] [-start startT] [-end endT] [-psr psrname] [-par parname] [-polycos polycofile] [-timing timing] [-rzwcand rzwcand] [-rzwfile rzwfile] [-accelcand accelcand] [-accelfile accelfile] [-bin] [-pb pb] [-x asinic] [-e e] [-To To] [-w w] [-wdot wdot] [-mask maskfile] [-events] [-days] [-mjds] [-double] [-offset offset] [--] infile ...\n");
+#endif
   fprintf(stderr,"%s","      Prepares (if required) and folds raw radio data, standard time series, or events.\n");
-  fprintf(stderr,"%s","          -ncpus: Number of processors to use with OpenMP\n");
-  fprintf(stderr,"%s","                  1 int value between 1 and oo\n");
-  fprintf(stderr,"%s","                  default: `1'\n");
   fprintf(stderr,"%s","              -o: Root of the output file names\n");
   fprintf(stderr,"%s","                  1 char* value\n");
   fprintf(stderr,"%s","           -pkmb: Raw data in Parkes Multibeam format\n");
@@ -1740,6 +1749,9 @@ usage(void)
   fprintf(stderr,"%s","           -bcpm: Raw data in Berkeley-Caltech Pulsar Machine (BPP) format\n");
   fprintf(stderr,"%s","         -spigot: Raw data in Caltech-NRAO Spigot Card format\n");
   fprintf(stderr,"%s","     -filterbank: Raw data in SIGPROC filterbank format\n");
+#ifdef USELOFAR
+  fprintf(stderr,"%s","      -lofarhdf5: Raw data in LOFARHDF5 format\n");
+#endif
   fprintf(stderr,"%s","        -psrfits: Raw data in PSRFITS format\n");
   fprintf(stderr,"%s","      -noweights: Do not apply PSRFITS weights\n");
   fprintf(stderr,"%s","       -noscales: Do not apply PSRFITS scales\n");
@@ -1760,6 +1772,7 @@ usage(void)
   fprintf(stderr,"%s","                  1 float value between 0 and 1000.0\n");
   fprintf(stderr,"%s","                  default: `6.0'\n");
   fprintf(stderr,"%s","         -noclip: Do not clip the data.  (The default is to _always_ clip!)\n");
+  fprintf(stderr,"%s","          -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default)\n");
   fprintf(stderr,"%s","         -noxwin: Do not show the result plots on-screen, only make postscript files\n");
   fprintf(stderr,"%s","         -runavg: Subtract each blocks average as it is read (single channel data only)\n");
   fprintf(stderr,"%s","           -fine: A finer gridding in the p/pdot plane (for well known p and pdot)\n");
@@ -1780,8 +1793,9 @@ usage(void)
   fprintf(stderr,"%s","                  default: `0'\n");
   fprintf(stderr,"%s","              -n: The number of bins in the profile.  Defaults to the number of sampling bins which correspond to one folded period\n");
   fprintf(stderr,"%s","                  1 int value\n");
-  fprintf(stderr,"%s","           -nsub: The number of sub-bands to use for the DM search.  If unspecified, will use something reasonable.\n");
+  fprintf(stderr,"%s","           -nsub: The number of sub-bands to use for the DM search\n");
   fprintf(stderr,"%s","                  1 int value between 1 and 4096\n");
+  fprintf(stderr,"%s","                  default: `32'\n");
   fprintf(stderr,"%s","          -npart: The number of sub-integrations to use for the period search\n");
   fprintf(stderr,"%s","                  1 int value between 1 and 4096\n");
   fprintf(stderr,"%s","                  default: `64'\n");
@@ -1873,7 +1887,7 @@ usage(void)
   fprintf(stderr,"%s","                  default: `0'\n");
   fprintf(stderr,"%s","          infile: Input data file name.  If the data is not in a regognized raw data format, it should be a file containing a time series of single-precision floats or short ints.  In this case a '.inf' file with the same root filename must also exist (Note that this means that the input data file must have a suffix that starts with a period)\n");
   fprintf(stderr,"%s","                  1...16384 values\n");
-  fprintf(stderr,"%s","  version: 21Apr15\n");
+  fprintf(stderr,"%s","  version: 09Aug14\n");
   fprintf(stderr,"%s","  ");
   exit(EXIT_FAILURE);
 }
@@ -1888,15 +1902,6 @@ parseCmdline(int argc, char **argv)
   for(i=1, cmd.argc=1; i<argc; i++) {
     if( 0==strcmp("--", argv[i]) ) {
       while( ++i<argc ) argv[cmd.argc++] = argv[i];
-      continue;
-    }
-
-    if( 0==strcmp("-ncpus", argv[i]) ) {
-      int keep = i;
-      cmd.ncpusP = 1;
-      i = getIntOpt(argc, argv, i, &cmd.ncpus, 1);
-      cmd.ncpusC = i-keep;
-      checkIntHigher("-ncpus", &cmd.ncpus, cmd.ncpusC, 1);
       continue;
     }
 
@@ -1932,6 +1937,13 @@ parseCmdline(int argc, char **argv)
       cmd.filterbankP = 1;
       continue;
     }
+
+#ifdef USELOFAR
+    if( 0==strcmp("-lofarhdf5", argv[i]) ) {
+      cmd.lofarhdf5P = 1;
+      continue;
+    }
+#endif
 
     if( 0==strcmp("-psrfits", argv[i]) ) {
       cmd.psrfitsP = 1;
@@ -2020,6 +2032,11 @@ parseCmdline(int argc, char **argv)
 
     if( 0==strcmp("-noclip", argv[i]) ) {
       cmd.noclipP = 1;
+      continue;
+    }
+
+    if( 0==strcmp("-DE405", argv[i]) ) {
+      cmd.de405P = 1;
       continue;
     }
 

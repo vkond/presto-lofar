@@ -22,10 +22,6 @@ char *Program;
 /*@-null*/
 
 static Cmdline cmd = {
-  /***** -ncpus: Number of processors to use with OpenMP */
-  /* ncpusP = */ 1,
-  /* ncpus = */ 1,
-  /* ncpusC = */ 1,
   /***** -o: Root of the output file names */
   /* outfileP = */ 0,
   /* outfile = */ (char*)0,
@@ -40,6 +36,10 @@ static Cmdline cmd = {
   /* spigotP = */ 0,
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   /* filterbankP = */ 0,
+#ifdef USELOFAR
+  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
+  /* lofarhdf5P = */ 0,
+#endif
   /***** -psrfits: Raw data in PSRFITS format */
   /* psrfitsP = */ 0,
   /***** -noweights: Do not apply PSRFITS weights */
@@ -825,18 +825,6 @@ showOptionValues(void)
 
   printf("Full command line is:\n`%s'\n", cmd.full_cmd_line);
 
-  /***** -ncpus: Number of processors to use with OpenMP */
-  if( !cmd.ncpusP ) {
-    printf("-ncpus not found.\n");
-  } else {
-    printf("-ncpus found:\n");
-    if( !cmd.ncpusC ) {
-      printf("  no values\n");
-    } else {
-      printf("  value = `%d'\n", cmd.ncpus);
-    }
-  }
-
   /***** -o: Root of the output file names */
   if( !cmd.outfileP ) {
     printf("-o not found.\n");
@@ -883,6 +871,17 @@ showOptionValues(void)
   } else {
     printf("-filterbank found:\n");
   }
+
+#ifdef USELOFAR
+
+  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
+  if( !cmd.lofarhdf5P ) {
+    printf("-lofarhdf5 not found.\n");
+  } else {
+    printf("-lofarhdf5 found:\n");
+  }
+
+#endif
 
   /***** -psrfits: Raw data in PSRFITS format */
   if( !cmd.psrfitsP ) {
@@ -1133,11 +1132,12 @@ showOptionValues(void)
 void
 usage(void)
 {
-  fprintf(stderr,"%s","   [-ncpus ncpus] -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-xwin] [-nocompute] [-rfixwin] [-rfips] [-time time] [-blocks blocks] [-timesig timesigma] [-freqsig freqsigma] [-chanfrac chantrigfrac] [-intfrac inttrigfrac] [-zapchan zapchanstr] [-zapints zapintsstr] [-mask maskfile] [--] infile ...\n");
+#ifdef USELOFAR
+  fprintf(stderr,"%s","   -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-xwin] [-nocompute] [-rfixwin] [-rfips] [-time time] [-blocks blocks] [-timesig timesigma] [-freqsig freqsigma] [-chanfrac chantrigfrac] [-intfrac inttrigfrac] [-zapchan zapchanstr] [-zapints zapintsstr] [-mask maskfile] [--] infile ...\n");
+#else
+  fprintf(stderr,"%s","   -o outfile [-pkmb] [-gmrt] [-bcpm] [-spigot] [-filterbank] [-psrfits] [-noweights] [-noscales] [-nooffsets] [-wapp] [-window] [-numwapps numwapps] [-if ifs] [-clip clip] [-noclip] [-invert] [-zerodm] [-xwin] [-nocompute] [-rfixwin] [-rfips] [-time time] [-blocks blocks] [-timesig timesigma] [-freqsig freqsigma] [-chanfrac chantrigfrac] [-intfrac inttrigfrac] [-zapchan zapchanstr] [-zapints zapintsstr] [-mask maskfile] [--] infile ...\n");
+#endif
   fprintf(stderr,"%s","      Examines radio data for narrow and wide band interference as well as problems with channels\n");
-  fprintf(stderr,"%s","         -ncpus: Number of processors to use with OpenMP\n");
-  fprintf(stderr,"%s","                 1 int value between 1 and oo\n");
-  fprintf(stderr,"%s","                 default: `1'\n");
   fprintf(stderr,"%s","             -o: Root of the output file names\n");
   fprintf(stderr,"%s","                 1 char* value\n");
   fprintf(stderr,"%s","          -pkmb: Raw data in Parkes Multibeam format\n");
@@ -1145,6 +1145,9 @@ usage(void)
   fprintf(stderr,"%s","          -bcpm: Raw data in Berkeley-Caltech Pulsar Machine (BPP) format\n");
   fprintf(stderr,"%s","        -spigot: Raw data in Caltech-NRAO Spigot Card format\n");
   fprintf(stderr,"%s","    -filterbank: Raw data in SIGPROC filterbank format\n");
+#ifdef USELOFAR
+  fprintf(stderr,"%s","     -lofarhdf5: Raw data in LOFARHDF5 format\n");
+#endif
   fprintf(stderr,"%s","       -psrfits: Raw data in PSRFITS format\n");
   fprintf(stderr,"%s","     -noweights: Do not apply PSRFITS weights\n");
   fprintf(stderr,"%s","      -noscales: Do not apply PSRFITS scales\n");
@@ -1191,7 +1194,7 @@ usage(void)
   fprintf(stderr,"%s","                 1 char* value\n");
   fprintf(stderr,"%s","         infile: Input data file name(s).\n");
   fprintf(stderr,"%s","                 1...16384 values\n");
-  fprintf(stderr,"%s","  version: 17Mar15\n");
+  fprintf(stderr,"%s","  version: 31Aug12\n");
   fprintf(stderr,"%s","  ");
   exit(EXIT_FAILURE);
 }
@@ -1207,15 +1210,6 @@ parseCmdline(int argc, char **argv)
   for(i=1, cmd.argc=1; i<argc; i++) {
     if( 0==strcmp("--", argv[i]) ) {
       while( ++i<argc ) argv[cmd.argc++] = argv[i];
-      continue;
-    }
-
-    if( 0==strcmp("-ncpus", argv[i]) ) {
-      int keep = i;
-      cmd.ncpusP = 1;
-      i = getIntOpt(argc, argv, i, &cmd.ncpus, 1);
-      cmd.ncpusC = i-keep;
-      checkIntHigher("-ncpus", &cmd.ncpus, cmd.ncpusC, 1);
       continue;
     }
 
@@ -1251,6 +1245,13 @@ parseCmdline(int argc, char **argv)
       cmd.filterbankP = 1;
       continue;
     }
+
+#ifdef USELOFAR
+    if( 0==strcmp("-lofarhdf5", argv[i]) ) {
+      cmd.lofarhdf5P = 1;
+      continue;
+    }
+#endif
 
     if( 0==strcmp("-psrfits", argv[i]) ) {
       cmd.psrfitsP = 1;

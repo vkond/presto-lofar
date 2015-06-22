@@ -79,6 +79,10 @@ static Cmdline cmd = {
   /* spigotP = */ 0,
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   /* filterbankP = */ 0,
+#ifdef USELOFAR
+  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
+  /* lofarhdf5P = */ 0,
+#endif
   /***** -psrfits: Raw data in PSRFITS format */
   /* psrfitsP = */ 0,
   /***** -fortran: Raw data was written by a fortran program */
@@ -990,6 +994,17 @@ showOptionValues(void)
     printf("-filterbank found:\n");
   }
 
+#ifdef USELOFAR
+
+  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
+  if( !cmd.lofarhdf5P ) {
+    printf("-lofarhdf5 not found.\n");
+  } else {
+    printf("-lofarhdf5 found:\n");
+  }
+
+#endif
+
   /***** -psrfits: Raw data in PSRFITS format */
   if( !cmd.psrfitsP ) {
     printf("-psrfits not found.\n");
@@ -1046,7 +1061,11 @@ showOptionValues(void)
 void
 usage(void)
 {
+#ifdef USELOFAR
+  fprintf(stderr,"%s","   [-page] [-byte] [-b] [-float] [-f] [-double] [-d] [-fcomplex] [-fc] [-dcomplex] [-dc] [-short] [-s] [-int] [-i] [-long] [-l] [-rzwcand] [-rzw] [-bincand] [-bin] [-position] [-pos] [-pkmb] [-bcpm] [-wapp] [-spigot] [-filterbank] [-lofarhdf5] [-psrfits] [-fortran] [-index [index]] [-nph nph] [--] file\n");
+#else
   fprintf(stderr,"%s","   [-page] [-byte] [-b] [-float] [-f] [-double] [-d] [-fcomplex] [-fc] [-dcomplex] [-dc] [-short] [-s] [-int] [-i] [-long] [-l] [-rzwcand] [-rzw] [-bincand] [-bin] [-position] [-pos] [-pkmb] [-bcpm] [-wapp] [-spigot] [-filterbank] [-psrfits] [-fortran] [-index [index]] [-nph nph] [--] file\n");
+#endif
   fprintf(stderr,"%s","      Reads raw data from a binary file and displays it on stdout.\n");
   fprintf(stderr,"%s","          -page: Paginate the output like 'more'\n");
   fprintf(stderr,"%s","          -byte: Raw data in byte format\n");
@@ -1076,6 +1095,9 @@ usage(void)
   fprintf(stderr,"%s","          -wapp: Raw data in WAPP format\n");
   fprintf(stderr,"%s","        -spigot: Raw data in Spigot Card format\n");
   fprintf(stderr,"%s","    -filterbank: Raw data in SIGPROC filterbank format\n");
+#ifdef USELOFAR
+  fprintf(stderr,"%s","     -lofarhdf5: Raw data in LOFARHDF5 format\n");
+#endif
   fprintf(stderr,"%s","       -psrfits: Raw data in PSRFITS format\n");
   fprintf(stderr,"%s","       -fortran: Raw data was written by a fortran program\n");
   fprintf(stderr,"%s","         -index: The range of objects to display\n");
@@ -1243,6 +1265,13 @@ parseCmdline(int argc, char **argv)
       cmd.filterbankP = 1;
       continue;
     }
+
+#ifdef USELOFAR
+    if( 0==strcmp("-lofarhdf5", argv[i]) ) {
+      cmd.lofarhdf5P = 1;
+      continue;
+    }
+#endif
 
     if( 0==strcmp("-psrfits", argv[i]) ) {
       cmd.psrfitsP = 1;

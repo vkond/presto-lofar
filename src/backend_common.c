@@ -23,7 +23,6 @@ extern double DATEOBS_to_MJD(char *dateobs, int *mjd_day, double *mjd_fracday);
 extern void read_filterbank_files(struct spectra_info *s);
 extern void read_PSRFITS_files(struct spectra_info *s);
 
-
 void psrdatatype_description(char *outstr, psrdatatype ptype)
 {
     if (ptype==SIGPROCFB)    strcpy(outstr, "SIGPROC filterbank");
@@ -36,6 +35,9 @@ void psrdatatype_description(char *outstr, psrdatatype ptype)
     else if (ptype==DAT)     strcpy(outstr, "PRESTO time series of floats");
     else if (ptype==SDAT)    strcpy(outstr, "PRESTO time series of shorts");
     else if (ptype==EVENTS)  strcpy(outstr, "Event list");
+#ifdef USELOFAR    
+    else if (ptype==LOFARHDF5)  strcpy(outstr, "LOFARHDF5");
+#endif
     else strcpy(outstr, "Unknown");
     return;
 }
@@ -53,7 +55,15 @@ void close_rawfiles(struct spectra_info *s)
         for (ii = 0 ; ii < s->num_files ; ii++)
             fits_close_file(s->fitsfiles[ii], &status);
         free(s->fitsfiles);
-    } else {
+    } 
+#ifdef USELOFAR
+    else if (s->datatype==LOFARHDF5) {
+        for (ii = 0 ; ii < s->num_files ; ii++)
+            close_LOFARHDF5_file(s->h5files[ii]);
+        if (s->h5files != NULL) free(s->h5files);
+    }
+#endif
+    else {
         for (ii = 0 ; ii < s->num_files ; ii++)
             fclose(s->files[ii]);
         free(s->files);
@@ -64,6 +74,9 @@ void read_rawdata_files(struct spectra_info *s)
 {
     if (s->datatype==SIGPROCFB) read_filterbank_files(s);
     else if (s->datatype==PSRFITS) read_PSRFITS_files(s);
+#ifdef USELOFAR
+    else if (s->datatype==LOFARHDF5) read_LOFARHDF5_files(s);
+#endif
     else if (s->datatype==SCAMP) exit(1);
     else if (s->datatype==BPP) exit(1);
     else if (s->datatype==WAPP) exit(1);
@@ -104,6 +117,9 @@ void identify_psrdatatype(struct spectra_info *s, int output)
             else s->datatype = PSRFITS;
         }
         else if (strcmp(suffix, "pkmb") == 0) s->datatype = SCAMP;
+#ifdef USELOFAR
+        else if (strcmp(suffix, "h5") == 0) s->datatype = LOFARHDF5;
+#endif
         else if (isdigit(suffix[0]) && 
                  isdigit(suffix[1]) &&
                  isdigit(suffix[2])) s->datatype = WAPP;

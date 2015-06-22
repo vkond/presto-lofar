@@ -71,7 +71,7 @@ int type_sizes[NUMTYPES] = {
    32768, /* This is the length of a BCPM header */
    0,     /* "Special" length for a WAPP header */
    0,     /* "Special" length for a SPIGOT header */
-   0      /* "Special" length for a SIGPROC/PSRFITS header */
+   0     /* "Special" length for a SIGPROC/PSRFITS/LOFARHDF5 header */
 };
 
 int objs_at_a_time[NUMTYPES] = {
@@ -170,6 +170,10 @@ int main(int argc, char **argv)
       index = SPIGOTHDR;
    else if (cmd->filterbankP)
       index = SPECTRAINFO;
+#ifdef USELOFAR   
+   else if (cmd->lofarhdf5P)
+      index = SPECTRAINFO;
+#endif
    else if (cmd->psrfitsP)
       index = SPECTRAINFO;
    
@@ -220,6 +224,11 @@ int main(int argc, char **argv)
                index = SPECTRAINFO;
                fprintf(stdout,
                        "Assuming the data is a SIGPROC filterbank file.\n\n");
+            } else if (0 == strcmp(extension, "h5")) {
+               cmd->lofarhdf5P = 1;
+               index = SPECTRAINFO;
+               fprintf(stdout,
+                       "Assuming the data is a LOFAR HDF5 file.\n\n");
             } else if (isdigit(extension[0]) &&
                        isdigit(extension[1]) && isdigit(extension[2])) {
                cmd->wappP = 1;
@@ -303,7 +312,7 @@ int main(int argc, char **argv)
    }
 
    // Use new-style backend reading stuff
-   if (cmd->psrfitsP || cmd->filterbankP) {
+   if (cmd->psrfitsP || cmd->filterbankP || cmd->lofarhdf5P) {
        struct spectra_info s;
 
        // Eventually we should use this...
@@ -311,6 +320,7 @@ int main(int argc, char **argv)
        spectra_info_set_defaults(&s);
        if (cmd->psrfitsP) s.datatype=PSRFITS;
        if (cmd->filterbankP) s.datatype=SIGPROCFB;
+       if (cmd->lofarhdf5P) s.datatype=LOFARHDF5;
        s.filenames = cmd->argv;
        s.num_files = cmd->argc;
        s.clip_sigma = 0.0;

@@ -23,6 +23,10 @@ typedef struct s_Cmdline {
   char spigotP;
   /***** -filterbank: Raw data in SIGPROC filterbank format */
   char filterbankP;
+#ifdef USELOFAR
+  /***** -lofarhdf5: Raw data in LOFARHDF5 format */
+  char lofarhdf5P;
+#endif
   /***** -psrfits: Raw data in PSRFITS format */
   char psrfitsP;
   /***** -noweights: Do not apply PSRFITS weights */
@@ -57,10 +61,12 @@ typedef struct s_Cmdline {
   char runavgP;
   /***** -numout: Output this many values.  If there are not enough values in the original data file, will pad the output file with the average value */
   char numoutP;
-  long numout;
+  int numout;
   int numoutC;
   /***** -nobary: Do not barycenter the data */
   char nobaryP;
+  /***** -DE405: Use the DE405 ephemeris for barycentering instead of DE200 (the default) */
+  char de405P;
   /***** -lodm: The lowest dispersion measure to de-disperse (cm^-3 pc) */
   char lodmP;
   double lodm;

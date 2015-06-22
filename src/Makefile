@@ -1,6 +1,10 @@
 #  Makefile for PRESTO
 #   by Scott M. Ransom
 
+# uncomment this line if you want to compile with
+# support of LOFARHDF5 backend
+USELOFAR = yes
+
 # OS type
 OS = Linux
 
@@ -40,8 +44,17 @@ GLIBLINK := $(shell pkg-config --libs glib-2.0)
 CFITSIOINC := $(shell pkg-config --cflags cfitsio)
 CFITSIOLINK := $(shell pkg-config --libs cfitsio)
 
+
+ifeq ($(USELOFAR),yes)
+	CXX = g++
+	LOFARLINK = -L/home/vlad/pulsar/lib -llofardal -lhdf5 -lstdc++
+	INCLH5 = -I/home/vlad/pulsar/include
+else
+    	CXX = gcc
+	LOFARLINK = 
+endif
 # The standard PRESTO libraries to link into executables
-PRESTOLINK = $(CFITSIOLINK) -L$(PRESTO)/lib -lpresto $(FFTLINK)
+PRESTOLINK = $(CFITSIOLINK) -L$(PRESTO)/lib -lpresto $(FFTLINK) $(LOFARLINK)
 
 CC = gcc
 FC = gfortran
@@ -51,6 +64,9 @@ CFLAGS = -I$(PRESTO)/include $(GLIBINC) $(CFITSIOINC) $(PGPLOTINC) $(FFTINC) \
 	-DUSEFFTW -DUSEMMAP -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 \
 	-g -O3 -ffast-math -Wall -W -fPIC
 #	-g -Wall -W -fPIC
+ifeq ($(USELOFAR),yes)
+    CFLAGS += -DUSELOFAR
+endif
 CLINKFLAGS = $(CFLAGS)
 # NOTE:  Be careful of upping the optimization on the
 #        FFLAGs.  Certain compilers (i.e. on Intel Macs) will
@@ -85,7 +101,11 @@ PRESTOOBJS = amoeba.o atwood.o barycenter.o birdzap.o cand_output.o\
 	twopass_real_inv.o vectors.o multifiles.o mask.o\
 	fitsfile.o hget.o hput.o imio.o djcl.o
 
-INSTRUMENTOBJS = backend_common.o zerodm.o sigproc_fb.o psrfits.o
+ifeq ($(USELOFAR),yes)
+	INSTRUMENTOBJS = lofarhdf5.o backend_common.o zerodm.o sigproc_fb.o psrfits.o
+else
+	INSTRUMENTOBJS = backend_common.o zerodm.o sigproc_fb.o psrfits.o
+endif
 
 # Use old header reading stuff for readfile
 READFILEOBJS = $(INSTRUMENTOBJS) multibeam.o bpp.o spigot.o \
@@ -140,6 +160,11 @@ libsla$(LIBSUFFIX):
 	rm slalib/sla_test.o
 	cd slalib ; $(FC) $(LIBCMD) -o $(PRESTO)/lib/libsla$(LIBSUFFIX) -fno-second-underscore *.o
 
+ifeq ($(USELOFAR),yes)
+lofarhdf5.o: lofarhdf5.cxx
+	$(CXX) $(CFLAGS) $(INCLH5) -c -g -fpermissive -Wno-parentheses lofarhdf5.cxx
+endif
+
 binaries: $(BINARIES)
 
 mpi: mpiprepsubband
@@ -193,10 +218,10 @@ rfifind: rfifind_cmd.c rfifind_cmd.o rfifind.o rfi_utils.o rfifind_plot.o range_
 	$(FC) $(FLINKFLAGS) -o $(PRESTO)/bin/$@  $(INSTRUMENTOBJS) $(PLOT2DOBJS) rfifind.o rfi_utils.o rfifind_cmd.o rfifind_plot.o range_parse.o $(PRESTOLINK) $(PGPLOTLINK) -lcfitsio -lm
 
 prepdata: prepdata_cmd.c prepdata_cmd.o prepdata.o $(INSTRUMENTOBJS)
-	$(CC) $(CLINKFLAGS) -o $(PRESTO)/bin/$@ prepdata.o prepdata_cmd.o $(INSTRUMENTOBJS) $(PRESTOLINK) -lcfitsio -lm
+	$(CXX) $(CLINKFLAGS) -o $(PRESTO)/bin/$@ prepdata.o prepdata_cmd.o $(INSTRUMENTOBJS) $(PRESTOLINK) -lcfitsio -lm
 
 prepsubband: prepsubband_cmd.c prepsubband_cmd.o prepsubband.o $(INSTRUMENTOBJS)
-	$(CC) $(CLINKFLAGS) -o $(PRESTO)/bin/$@ prepsubband.o prepsubband_cmd.o $(INSTRUMENTOBJS) $(PRESTOLINK) -lcfitsio -lm
+	$(CXX) $(CLINKFLAGS) -o $(PRESTO)/bin/$@ prepsubband.o prepsubband_cmd.o $(INSTRUMENTOBJS) $(PRESTOLINK) -lcfitsio -lm
 
 prepfold: prepfold_cmd.c prepfold_cmd.o prepfold.o prepfold_utils.o prepfold_plot.o least_squares.o polycos.o readpar.o $(INSTRUMENTOBJS) $(PLOT2DOBJS)
 	$(FC) $(FLINKFLAGS) -o $(PRESTO)/bin/$@ prepfold.o prepfold_utils.o prepfold_plot.o prepfold_cmd.o least_squares.o polycos.o readpar.o $(PLOT2DOBJS) $(INSTRUMENTOBJS) $(LAPACKLINK) $(PRESTOLINK) $(PGPLOTLINK) -lcfitsio -lm
@@ -244,7 +269,7 @@ quicklook: quicklook.o
 	$(CC) $(CLINKFLAGS) -o $(PRESTO)/bin/$@ quicklook.o $(PRESTOLINK) -lm
 
 readfile: readfile_cmd.c readfile_cmd.o readfile.o $(READFILEOBJS) 
-	$(CC) $(CLINKFLAGS) -o $(PRESTO)/bin/$@ readfile.o readfile_cmd.o $(READFILEOBJS) $(PRESTOLINK) -lcfitsio -lm
+	$(CXX) $(CLINKFLAGS) -o $(PRESTO)/bin/$@ readfile.o readfile_cmd.o $(READFILEOBJS) $(PRESTOLINK) -lcfitsio -lm
 
 realfft: realfft_cmd.c realfft_cmd.o realfft.o
 	$(CC) $(CLINKFLAGS) -o $(PRESTO)/bin/$@ realfft.o realfft_cmd.o $(PRESTOLINK) -lm

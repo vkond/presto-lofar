@@ -10,8 +10,6 @@ Commandline full_cmd_line
 
 # Options (in order you want them to appear)
 
-Int -ncpus   ncpus      {Number of processors to use with OpenMP} \
-	-r 1 oo  -d 1
 String -o       outfile {Root of the output file names} \
 	-m
 Flag   -pkmb    pkmb    {Raw data in Parkes Multibeam format}
@@ -19,6 +17,7 @@ Flag   -gmrt    gmrt    {Raw data in GMRT Phased Array format}
 Flag   -bcpm    bcpm    {Raw data in Berkeley-Caltech Pulsar Machine (BPP) format}
 Flag   -spigot  spigot  {Raw data in Caltech-NRAO Spigot Card format}
 Flag   -filterbank  filterbank  {Raw data in SIGPROC filterbank format}
+Flag   -lofarhdf5     lofarhdf5     {Raw data in LOFARHDF5 format}
 Flag   -psrfits     psrfits     {Raw data in PSRFITS format}
 Flag   -noweights  noweights  {Do not apply PSRFITS weights}
 Flag   -noscales   noscales   {Do not apply PSRFITS scales}
@@ -34,12 +33,13 @@ Float  -clip    clip    {Time-domain sigma to use for clipping (0.0 = no clippin
 Flag   -noclip  noclip  {Do not clip the data.  (The default is to _always_ clip!)}
 Flag   -invert  invert  {For rawdata, flip (or invert) the band}
 Flag   -zerodm  zerodm  {Subtract the mean of all channels from each sample (i.e. remove zero DM)}
-Long    -numout  numout  {Output this many values.  If there are not enough values in the original data file, will pad the output file with the average value} \
+Int    -numout  numout  {Output this many values.  If there are not enough values in the original data file, will pad the output file with the average value} \
 	-r 1 oo
 Int    -downsamp downsamp {The number of neighboring bins to co-add} \
-       -r 1 128 -d 1
+       -r 1 32 -d 1
 Flag   -nobary  nobary  {Do not barycenter the data}
 Flag   -shorts  shorts  {Use short ints for the output data instead of floats}
+Flag   -DE405   de405   {Use the DE405 ephemeris for barycentering instead of DE200 (the default)}
 Double  -dm      dm      {The dispersion measure to de-disperse (cm^-3 pc)} \
 	-r 0 oo  -d 0
 String -mask    maskfile {File containing masking information to use}
